@@ -10,7 +10,6 @@ import nl.dionsegijn.konfetti.xml.KonfettiView
 import nl.dionsegijn.konfetti.xml.listeners.OnParticleSystemUpdateListener
 import java.util.concurrent.TimeUnit
 
-
 class ConfettiGuideBlocks(private val activity: Activity){
 
     fun show(onStart: (inputStart: Unit) -> Unit, onEnd: (inputEnd: Unit) -> Unit){
