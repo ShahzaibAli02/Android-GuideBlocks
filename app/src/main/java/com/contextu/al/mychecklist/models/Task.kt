@@ -27,6 +27,11 @@ data class Task(var id:String="",val name:String,var checked:Boolean=false,var e
 
     }
 
+    suspend fun getEnabled(contextualContainer:ContextualContainer):Boolean
+    {
+        return getChecked(contextualContainer).not()
+    }
+
     fun doAction(contextualContainer:ContextualContainer)
     {
         when(action)

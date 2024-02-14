@@ -1,5 +1,6 @@
 package com.contextu.al.mychecklist
 
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
@@ -23,15 +24,21 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,80 +46,66 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.contextu.al.model.customguide.ContextualContainer
+import com.contextu.al.mychecklist.composables.CheckListRow
+import com.contextu.al.mychecklist.composables.LazyDivider
+import com.contextu.al.mychecklist.models.ActionData
 import com.contextu.al.mychecklist.models.Task
+import com.contextu.al.mychecklist.models.TaskAction
 import com.contextu.al.mychecklist.viewModels.TaskViewModel
+import kotlin.math.log
 
 class MyCheckListGuideBlocks : ComponentActivity()
 {
 
 
+    val LocalContextualContainer = staticCompositionLocalOf<ContextualContainer?> { null }
 
-//    override fun onCreate(savedInstanceState: Bundle?)
-//    {
-//        super.onCreate(savedInstanceState)
-//        setContent {
-//            ComposeCheckListTheme { // A surface container using the 'background' color from the theme
-//                Surface(modifier = androidx.compose.ui.Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-//                    Greeting("Android")
-//                }
-//            }
-//        }
-//    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun show(contextualContainer: ContextualContainer)
     {
 
-
-        val viewModel:TaskViewModel by viewModels()
-        SideEffect {
-            contextualContainer.guidePayload.guide.extraJson?.let {
-                viewModel.parseJson(it)
-            }
-
-        }
-
-        val taskListState = viewModel.list.collectAsState()
-
-        // Now you can access the taskListState.value to get the current list value
-        val taskList = taskListState.value
-        val localDensity = LocalDensity.current
-
-        val bottomSheetState = rememberBottomSheetScaffoldState()
-        val coroutineScope = rememberCoroutineScope()
-
-        BottomSheetScaffold(
-            sheetContent = {
-                MyCheckList(taskList,modifier = Modifier.height((350-50).dp))
-              },
-            sheetPeekHeight = 350.dp,
-            modifier = Modifier
-                .systemBarsPadding()
-        ) {
-        }
-        LaunchedEffect(bottomSheetState) {
-            snapshotFlow { bottomSheetState.bottomSheetState.isVisible }.collect { isVisible ->
-                if (isVisible) {
-
-                } else {
-
-                    //TODO HIDEN
+        
+        CompositionLocalProvider(value = LocalContextualContainer provides contextualContainer ) {
+            val viewModel:TaskViewModel by viewModels()
+            SideEffect {
+                contextualContainer.guidePayload.guide.extraJson?.let {
+                    viewModel.parseJson(it)
                 }
             }
-
+            val taskListState = viewModel.list.collectAsState()
+            val taskList = taskListState.value
+            ShowBottomSheet(taskList)
         }
 
 
     }
 
+    @Composable
+    @OptIn(ExperimentalMaterial3Api::class)
+    private fun ShowBottomSheet(taskList: List<Task>)
+    {
+        val bottomSheetState = rememberBottomSheetScaffoldState()
+        BottomSheetScaffold(
+            sheetContent = {
+                MyCheckList(taskList, modifier = Modifier.height((350 - 50).dp))
+            }, sheetPeekHeight = 350.dp, modifier = Modifier.systemBarsPadding()
+        ) {}
+        LaunchedEffect(bottomSheetState) {
+            snapshotFlow { bottomSheetState.bottomSheetState.isVisible }.collect { isVisible ->
+                Log.d("TAG", "ShowBottomSheet: visibility changed : ${isVisible}")
+            }
+
+        }
+    }
 
 
     @Composable
     fun MyCheckList(taskList: List<Task>, modifier: Modifier)
     {
 
+        val contextualContainer = LocalContextualContainer.current
         val list = List(20) { "" }
+
         Column(modifier = modifier){
             Text(
                 text = "Check List title ",
@@ -135,15 +128,30 @@ class MyCheckListGuideBlocks : ComponentActivity()
                     .fillMaxHeight()){
                     itemsIndexed(taskList) { index, task ->
 
+                        var enabled by remember { mutableStateOf(false) } // Initial value doesn't matter
+                        var checked by remember { mutableStateOf(false) } // Initial value doesn't matter
+
+                        val coroutineScope = rememberCoroutineScope()
+
+                        // Update enabled when the result of the suspending function is available
+                        LaunchedEffect(index) {
+                            enabled = task.getEnabled(contextualContainer!!)
+                            checked = task.getChecked(contextualContainer!!)
+                        }
+                        Log.d("TAG", "MyCheckList: Enabled : ${enabled}")
                         CheckListRow(
                             title=task.name,
-                            enabled = task.enabled,
-                            checked = task.checked,
+                            enabled = enabled,
+                            checked = checked,
                             onClick = {
-
                             },
                             onCheckChange = {
-
+                                if(it)
+                                {
+                                    Log.d("TAG","MyCheckList: Enabled : ${enabled}")
+                                    task.setChecked(true,contextualContainer!!)
+                                    task.doAction(contextualContainer!!)
+                                }
                             }
 
                         )
@@ -156,62 +164,18 @@ class MyCheckListGuideBlocks : ComponentActivity()
         }
     }
 
-    @Composable
-    private fun LazyDivider(index: Int, list: List<String>)
-    {
-        if (index < list.size - 1)
-        {
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(), color = Color.Black.copy(alpha = 0.08f), thickness = 1.dp
-            )
-        }
-    }
-
-
-    @Composable
-    fun CheckListRow(
-        title:String,
-        enabled:Boolean,
-        checked:Boolean,
-        onClick:()->Unit,
-        onCheckChange:(checked:Boolean)->Unit,
-        )
-    {
 
 
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp)
-            .wrapContentHeight()
-            .clickable {
-                onClick()
-            },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start){
-            Text(
-                text = title,
-                color = Color.Black,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.weight(1f)
-            )
-            Checkbox(modifier = Modifier
-                .size(15.dp)
-                .padding(end = 10.dp),
-                enabled = enabled,
-                checked = checked, onCheckedChange = {
-                    onCheckChange(it)
-                }
-            )
 
-        }
-
-    }
 
     @Preview(showBackground = true, heightDp = 500, widthDp = 300)
     @Composable
     fun GreetingPreview()
     {
-        show(null)
+        val mLsit= List(5) {
+            Task("", "Test ${it}", true, false, TaskAction.Unknown, ActionData(),)
+        }
+        ShowBottomSheet(mLsit)
     }
 }
