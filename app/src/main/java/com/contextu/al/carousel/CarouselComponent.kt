@@ -41,7 +41,7 @@ import com.contextu.al.model.CarouselModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CarouselComponent(
+fun CarouselComponentV1(
     carousel: CarouselModel,
     modifier: Modifier = Modifier,
     onSkipClick: () -> Unit
@@ -116,7 +116,7 @@ fun CarouselComponent(
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .weight(0.2f, true)
+                        .weight(if (item.buttonModel != null) 0.2f else 0.4f, true)
                 ) {
                     AsyncImage(
                         imageLoader = ImageLoader.Builder(LocalContext.current)
@@ -135,19 +135,19 @@ fun CarouselComponent(
                         contentDescription = null,
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
-                            .align(Alignment.BottomCenter)
+                            .align(if (item.buttonModel != null) Alignment.BottomCenter else Alignment.Center)
                     )
                 }
 
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .weight(0.5f, true)
+                        .weight(if (item.buttonModel != null) 0.5f else 0.8f, true)
                 ) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        verticalArrangement = if (item.buttonModel != null) Arrangement.Center else Arrangement.Top
                     ) {
                         with(item.title) {
                             AppTextView(
