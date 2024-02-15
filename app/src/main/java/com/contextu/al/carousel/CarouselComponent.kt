@@ -41,7 +41,7 @@ import com.contextu.al.model.CarouselModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CarouselComponentV1(
+fun CarouselComponent(
     carousel: CarouselModel,
     modifier: Modifier = Modifier,
     onSkipClick: () -> Unit
