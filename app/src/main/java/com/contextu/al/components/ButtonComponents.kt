@@ -85,8 +85,7 @@ fun ButtonComponent(
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Red),
+                        .fillMaxSize(),
                 ) {
                     with(buttonModel.textModel) {
                         AppTextView(
