@@ -35,6 +35,11 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.9"
     }
     packaging {
         resources {
@@ -75,5 +80,22 @@ dependencies {
     implementation("androidx.appcompat:appcompat:$appcompat_version")
     implementation("com.google.android.material:material:1.11.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    //COMPOSE CODE
+    val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+    implementation("androidx.activity:activity-compose:1.7.0")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+
+    implementation(group="com.contextu.al",name="contextual",version = "3.+") {
+        exclude(group = "com.github.bumptech.glide")
+        exclude(group = "androidx.room")
+    }
+    implementation("com.google.code.gson:gson:2.8.8")
 
 }
