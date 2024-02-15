@@ -23,7 +23,8 @@ class TaskViewModel:ViewModel()
     {
         val gson = Gson()
         val taskList = gson.fromJson(json, TaskList::class.java)
-        taskList?.tasks?.let {  updateList(it) }?: Log.e("TaskViewModel","parseJson() Failed to parse json")
+        taskList?.tasks?.let {
+            updateList(it) }?: Log.e("TaskViewModel","parseJson() Failed to parse json")
     }
     
 

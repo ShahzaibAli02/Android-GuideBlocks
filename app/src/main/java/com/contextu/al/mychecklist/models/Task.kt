@@ -1,10 +1,16 @@
 package com.contextu.al.mychecklist.models
 
+import android.app.Activity
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.contextu.al.model.customguide.ContextualContainer
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 
-class Task
+ class Task
 {
 
     var id:String?=null
@@ -13,7 +19,7 @@ class Task
     var enabled:Boolean?=true
     val action:TaskAction?=null
 
-    val action_data:ActionData?=null
+     val action_data:ActionData?=null
 
     var checkedKey: String? = ""
         get() {
@@ -48,9 +54,9 @@ class Task
         when(action)
         {
             TaskAction.SetTag -> {
-                action_data?.key?.let {key->
-                    contextualContainer.tagManager.setStringTag(key,action_data.value?:"")
-                }
+                        action_data?.key?.let {key->
+                            contextualContainer.tagManager.setStringTag(key,action_data.value?:"")
+                        }
 
 
                 Log.d("Task", "doAction: SetTag Done")
