@@ -2,9 +2,9 @@ package com.contextu.al.mychecklist.viewModels
 
 import androidx.lifecycle.ViewModel
 import com.contextu.al.clientsidetrigger.util.log.Log
+import com.google.gson.Gson
 import com.contextu.al.mychecklist.models.Task
 import com.contextu.al.mychecklist.models.TaskList
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

@@ -1,8 +1,6 @@
 package com.contextu.al.mychecklist
 
 import android.util.Log
-import android.widget.Space
-import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
@@ -20,7 +18,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,17 +27,13 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.DisposableEffectScope
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,15 +41,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.contextu.al.model.customguide.ContextualContainer
 import com.contextu.al.mychecklist.composables.CheckListRow
 import com.contextu.al.mychecklist.composables.LazyDivider
-import com.contextu.al.mychecklist.models.ActionData
 import com.contextu.al.mychecklist.models.Task
-import com.contextu.al.mychecklist.models.TaskAction
 import com.contextu.al.mychecklist.viewModels.TaskViewModel
 import kotlinx.coroutines.launch
 import kotlin.random.Random
@@ -153,9 +143,10 @@ class MyCheckListGuideBlocks
                 ) {
                     itemsIndexed(taskList) { index, task ->
 
-                        var enabled by remember { mutableStateOf(true) }
-                        var checked by remember { mutableStateOf(true) }
-                        LaunchedEffect(index) {
+                        var enabled by remember { mutableStateOf(false) }
+                        var checked by remember { mutableStateOf(false) }
+                        LaunchedEffect(Random.nextInt()) {
+                            Log.d("TAG", "LaunchedEffect: "+contextualContainer)
                             contextualContainer?.let {
                                 enabled = task.getEnabled(contextualContainer)
                                 checked = task.getChecked(contextualContainer)
