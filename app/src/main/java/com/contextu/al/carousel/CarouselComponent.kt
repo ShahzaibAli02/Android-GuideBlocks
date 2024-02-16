@@ -118,13 +118,13 @@ fun CarouselComponent(
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .weight(0.2f, true)
+                        .weight(0.3f, true)
                 )
 
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .weight(0.8f, true)
+                        .weight(0.7f, true)
                 ) {
                     AsyncImage(
                         imageLoader = ImageLoader.Builder(LocalContext.current)
@@ -154,7 +154,7 @@ fun CarouselComponent(
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .weight(0.75f, true)
+                        .weight(0.5f, true)
                 ) {
                     Column {
                         with(item.title) {
