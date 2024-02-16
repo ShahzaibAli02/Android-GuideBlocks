@@ -81,7 +81,6 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
-
     //NEW CHANGES
     //COMPOSE CODE
     val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
@@ -100,5 +99,8 @@ dependencies {
         exclude(group = "androidx.room")
     }
     implementation("com.google.code.gson:gson:2.8.8")
-
+    
+    //coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-gif:2.4.0")
 }
