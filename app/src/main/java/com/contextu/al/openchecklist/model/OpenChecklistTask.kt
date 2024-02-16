@@ -1,13 +1,14 @@
 package com.contextu.al.openchecklist.model
 
+import com.contextu.al.clientsidetrigger.util.log.Log
 import org.json.JSONException
 import org.json.JSONObject
 
 class OpenChecklistTask(
     val name: String,
-    val action: String,
+    val action: OpenChecklistTaskAction,
     val actionData: OpenChecklistTaskActionData,
-    val checked: Boolean
+    var checked: Boolean
 ){
     var id: String = name.lowercase().trim().replace(" ","_")
     fun checkedKey(): String {
@@ -20,6 +21,12 @@ data class OpenChecklistTaskActionData(
     val key: String? = null,
     val value: String? = null
 )
+
+enum class OpenChecklistTaskAction{
+    GoToScreen,
+    SetTag,
+    Undefined
+}
 
 fun parsJSONtoTaskList(json: String): List<OpenChecklistTask> {
 
@@ -35,7 +42,11 @@ fun parsJSONtoTaskList(json: String): List<OpenChecklistTask> {
             list.add(
                 OpenChecklistTask(
                     name = taskObject.getString("name"),
-                    action = taskObject.getString("action"),
+                    action = when(taskObject.getString("action")){
+                        "gotoScreen" -> OpenChecklistTaskAction.GoToScreen
+                        "SetTag" -> OpenChecklistTaskAction.SetTag
+                        else ->  OpenChecklistTaskAction.Undefined
+                    },
                     actionData = OpenChecklistTaskActionData(
                         deepLink = taskActionDataObject.optString("deeplink"),
                         key = taskActionDataObject.optString("key"),
@@ -47,6 +58,7 @@ fun parsJSONtoTaskList(json: String): List<OpenChecklistTask> {
         }
     } catch (e: JSONException) {
         e.printStackTrace()
+        Log.e("TaskViewModel","parseJson() Failed to parse json")
     }
 
     return list
