@@ -219,8 +219,8 @@ fun CarouselComponent(
         ) {
             repeat(carousel.items.size) { iteration ->
                 val color =
-                    if (pagerState.currentPage == iteration) Color.White else Color.Green.copy(
-                        alpha = 0.1f
+                    if (pagerState.currentPage == iteration) Color.White else Color.Black.copy(
+                        alpha = 0.3f
                     )
                 if (pagerState.currentPage == iteration) {
                     Box(
