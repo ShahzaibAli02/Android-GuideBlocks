@@ -20,24 +20,30 @@ import kotlinx.coroutines.flow.firstOrNull
     val action:TaskAction?=null
 
      val action_data:ActionData?=null
-
-    var checkedKey: String? = ""
-        get() {
-            if (field==null) {
-                field=initIdChecked()
-            }
-            return field
-        }
     suspend fun getChecked(contextualContainer:ContextualContainer):Boolean
     {
-        return contextualContainer.tagManager.getTag(checkedKey?:"N/A").firstOrNull()?.tagStringValue.equals("true",true)
+
+        if(checked==false)
+        {
+            getCheckedKey().let {
+
+                return contextualContainer.tagManager.getTag(it).firstOrNull()?.tagStringValue.equals("true",true)
+
+            }
+        }
+        else
+        {
+            return true
+        }
+
+
     }
 
     fun setChecked(checked: Boolean,contextualContainer:ContextualContainer)
     {
 
         this.checked=checked
-        checkedKey?.let {
+        getCheckedKey()?.let {
             contextualContainer.tagManager.setStringTag(it, checked.toString())
         }
 
@@ -76,16 +82,11 @@ import kotlinx.coroutines.flow.firstOrNull
         }
 
     }
-    init
-    {
-        initIdChecked()
-    }
 
-    private fun initIdChecked():String
+
+    private fun getCheckedKey():String
     {
         id = name?.lowercase()?.trim()?.replace(" ", "_")?:""
-        checkedKey = id + "_checked"
-        Log.d("TAG", "INIT CHECKED : ${checkedKey}")
-        return checkedKey!!
+        return  id + "_checked"
     }
 }
