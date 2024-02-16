@@ -118,71 +118,70 @@ fun CarouselComponent(
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .weight(0.15f, true)
+                        .weight(0.2f, true)
                 )
+
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .weight(0.75f, false)
+                        .weight(0.8f, true)
                 ) {
-
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(24.dp)
-                    ) {
-
-                        AsyncImage(
-                            imageLoader = ImageLoader.Builder(LocalContext.current)
-                                .components {
-                                    if (Build.VERSION.SDK_INT >= 28) {
-                                        add(ImageDecoderDecoder.Factory())
-                                    } else {
-                                        add(GifDecoder.Factory())
-                                    }
+                    AsyncImage(
+                        imageLoader = ImageLoader.Builder(LocalContext.current)
+                            .components {
+                                if (Build.VERSION.SDK_INT >= 28) {
+                                    add(ImageDecoderDecoder.Factory())
+                                } else {
+                                    add(GifDecoder.Factory())
                                 }
-                                .build(),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(item.image)
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .size(300.dp)
-                                .aspectRatio(1f)
-                                .clip(CircleShape)
-                                .border(BorderStroke(1.dp, Color.LightGray), shape = CircleShape)
-                        )
-
-                        Column {
-                            with(item.title) {
-                                AppTextView(
-                                    size = fontSize,
-                                    text = text,
-                                    fontWeight = fontWeight,
-                                    color = color,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(start = 24.dp, end = 24.dp),
-                                    lineHeight = (fontSize + 10).toSP(),
-                                    textAlign = TextAlign.Center
-                                )
                             }
+                            .build(),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(item.image)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp)
+                            .aspectRatio(1f)
+                            .clip(CircleShape)
+                            .border(BorderStroke(1.dp, Color.LightGray), shape = CircleShape)
+                    )
+                }
 
-                            item.content?.apply {
-                                AppTextView(
-                                    size = fontSize,
-                                    text = text,
-                                    fontWeight = fontWeight,
-                                    color = color,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 8.dp, start = 8.dp, end = 8.dp),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(0.75f, true)
+                ) {
+                    Column {
+                        with(item.title) {
+                            AppTextView(
+                                size = fontSize,
+                                text = text,
+                                fontWeight = fontWeight,
+                                color = color,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 24.dp, end = 24.dp),
+                                lineHeight = (fontSize + 10).toSP(),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+
+                        item.content?.apply {
+                            AppTextView(
+                                size = fontSize,
+                                text = text,
+                                fontWeight = fontWeight,
+                                color = color,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp, start = 8.dp, end = 8.dp),
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }
@@ -191,11 +190,13 @@ fun CarouselComponent(
                     Modifier
                         .fillMaxWidth()
                         .padding(bottom = 30.dp)
-                        .weight(0.3f, true)
+                        .weight(0.3f)
                 ) {
                     item.buttonModel?.let {
                         Column(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .align(Alignment.BottomCenter),
                             verticalArrangement = Arrangement.Bottom
                         ) {
                             ButtonComponent(
@@ -218,16 +219,29 @@ fun CarouselComponent(
         ) {
             repeat(carousel.items.size) { iteration ->
                 val color =
-                    if (pagerState.currentPage == iteration) Color.White else Color.Blue.copy(
+                    if (pagerState.currentPage == iteration) Color.White else Color.Green.copy(
                         alpha = 0.1f
                     )
-                Box(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                        .size(8.dp)
-                )
+                if (pagerState.currentPage == iteration) {
+                    Box(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(Color.White)
+                            .height(4.dp)
+                            .width(20.dp)
+                            .align(Alignment.CenterVertically)
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                            .size(8.dp)
+                            .align(Alignment.CenterVertically)
+                    )
+                }
             }
         }
     }
