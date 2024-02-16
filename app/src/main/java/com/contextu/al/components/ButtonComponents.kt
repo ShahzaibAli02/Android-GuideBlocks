@@ -61,7 +61,9 @@ fun ButtonComponent(
         }
 
         Column(
-            modifier = Modifier.align(Alignment.BottomStart)
+            modifier = Modifier.fillMaxWidth()
+                .align(Alignment.BottomCenter),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(
                 modifier = modifier.height(

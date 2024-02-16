@@ -1,6 +1,7 @@
 package com.contextu.al.carousel
 
 import android.os.Build
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,37 +50,37 @@ fun CarouselComponent(
 ) {
     val pagerState = rememberPagerState()
 
-    val heightModifier = if (carousel.height.contains("%")) {
-        val height = carousel.height.split("%").firstOrNull()?.toIntOrNull()
+    val heightModifier = if (carousel.baseView.height.contains("%")) {
+        val height = carousel.baseView.height.split("%").firstOrNull()?.toIntOrNull()
         height?.let {
             Modifier.fillMaxHeight((it / 100f))
         } ?: Modifier
     } else {
-        val height = carousel.height.toFloatOrNull()
+        val height = carousel.baseView.height.toFloatOrNull()
         height?.let {
             Modifier.height(Dp(it))
         } ?: Modifier
     }
 
-    val widthModifier = if (carousel.width.contains("%")) {
-        val height = carousel.width.split("%").firstOrNull()?.toIntOrNull()
+    val widthModifier = if (carousel.baseView.width.contains("%")) {
+        val height = carousel.baseView.width.split("%").firstOrNull()?.toIntOrNull()
         height?.let {
             heightModifier.fillMaxWidth((it / 100f))
         } ?: heightModifier
     } else {
-        val height = carousel.width.toFloatOrNull()
+        val height = carousel.baseView.width.toFloatOrNull()
         height?.let {
             heightModifier.width(Dp(it))
         } ?: heightModifier
     }
 
-    val cornerRadius = carousel.cornerRadius.toString().toFloatOrNull()?.let {
+    val cornerRadius = carousel.baseView.cornerRadius.toString().toFloatOrNull()?.let {
         widthModifier.clip(RoundedCornerShape(Dp(it)))
     } ?: widthModifier
 
-    val border = carousel.border.width.let {
+    val border = carousel.baseView.border.width.let {
         if (it > 0)
-            cornerRadius.border(Dp(it), Color(carousel.border.color))
+            cornerRadius.border(Dp(it), Color(carousel.baseView.border.color))
         else
             cornerRadius
     }
@@ -91,103 +93,110 @@ fun CarouselComponent(
             pageCount = carousel.items.size,
             modifier = border
                 .padding(
-                    top = Dp(carousel.padding.top.toFloat()),
-                    bottom = Dp(carousel.padding.bottom.toFloat()),
-                    start = Dp(carousel.padding.left.toFloat()),
-                    end = Dp(carousel.padding.right.toFloat())
+                    top = Dp(carousel.baseView.padding.top.toFloat()),
+                    bottom = Dp(carousel.baseView.padding.bottom.toFloat()),
+                    start = Dp(carousel.baseView.padding.left.toFloat()),
+                    end = Dp(carousel.baseView.padding.right.toFloat())
                 )
-                .background(Color(carousel.backGroundColor))
+                .background(Color(carousel.baseView.backGroundColor))
                 .align(Alignment.Center),
         ) { page ->
             val item = carousel.items[page]
             Column(
                 modifier = Modifier
                     .padding(
-                        top = Dp(carousel.padding.top.toFloat()),
-                        bottom = Dp(carousel.padding.bottom.toFloat()),
-                        start = Dp(carousel.padding.left.toFloat()),
-                        end = Dp(carousel.padding.right.toFloat())
+                        top = Dp(carousel.baseView.padding.top.toFloat()),
+                        bottom = Dp(carousel.baseView.padding.bottom.toFloat()),
+                        start = Dp(carousel.baseView.padding.left.toFloat()),
+                        end = Dp(carousel.baseView.padding.right.toFloat())
                     )
                     .fillMaxSize()
-                    .background(Color(item.backGroundColor)),
+                    .background(Color(item.baseView.backGroundColor)),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .weight(if (item.buttonModel != null) 0.2f else 0.4f, true)
+                        .weight(0.15f, true)
+                )
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(0.75f, false)
                 ) {
-                    AsyncImage(
-                        imageLoader = ImageLoader.Builder(LocalContext.current)
-                            .components {
-                                if (Build.VERSION.SDK_INT >= 28) {
-                                    add(ImageDecoderDecoder.Factory())
-                                } else {
-                                    add(GifDecoder.Factory())
+
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+
+                        AsyncImage(
+                            imageLoader = ImageLoader.Builder(LocalContext.current)
+                                .components {
+                                    if (Build.VERSION.SDK_INT >= 28) {
+                                        add(ImageDecoderDecoder.Factory())
+                                    } else {
+                                        add(GifDecoder.Factory())
+                                    }
                                 }
+                                .build(),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(item.image)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .size(300.dp)
+                                .aspectRatio(1f)
+                                .clip(CircleShape)
+                                .border(BorderStroke(1.dp, Color.LightGray), shape = CircleShape)
+                        )
+
+                        Column {
+                            with(item.title) {
+                                AppTextView(
+                                    size = fontSize,
+                                    text = text,
+                                    fontWeight = fontWeight,
+                                    color = color,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 24.dp, end = 24.dp),
+                                    lineHeight = (fontSize + 10).toSP(),
+                                    textAlign = TextAlign.Center
+                                )
                             }
-                            .build(),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(item.image)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .align(if (item.buttonModel != null) Alignment.BottomCenter else Alignment.Center)
-                    )
+
+                            item.content?.apply {
+                                AppTextView(
+                                    size = fontSize,
+                                    text = text,
+                                    fontWeight = fontWeight,
+                                    color = color,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp, start = 8.dp, end = 8.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
                 }
 
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .weight(if (item.buttonModel != null) 0.5f else 0.8f, true)
+                        .padding(bottom = 30.dp)
+                        .weight(0.3f, true)
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = if (item.buttonModel != null) Arrangement.Center else Arrangement.Top
-                    ) {
-                        with(item.title) {
-                            AppTextView(
-                                size = fontSize,
-                                text = text,
-                                fontWeight = fontWeight,
-                                color = color,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 24.dp, end = 24.dp),
-                                lineHeight = (fontSize + 10).toSP(),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-
-                        item.content?.apply {
-                            AppTextView(
-                                size = fontSize,
-                                text = text,
-                                fontWeight = fontWeight,
-                                color = color,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 16.dp, end = 16.dp),
-                                lineHeight = (fontSize + 10).toSP(),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                }
-
-                item.buttonModel?.let {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .weight(0.3f, true)
-                    ) {
+                    item.buttonModel?.let {
                         Column(
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Bottom
                         ) {
                             ButtonComponent(
                                 buttonModel = it,
@@ -197,7 +206,6 @@ fun CarouselComponent(
                         }
                     }
                 }
-
             }
         }
 
