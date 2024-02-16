@@ -81,6 +81,8 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
+
+    //NEW CHANGES
     //COMPOSE CODE
     val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
     implementation(composeBom)
