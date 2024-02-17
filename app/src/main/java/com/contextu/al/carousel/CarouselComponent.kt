@@ -48,7 +48,9 @@ fun CarouselComponent(
     modifier: Modifier = Modifier,
     onSkipClick: () -> Unit
 ) {
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(pageCount = {
+        carousel.items.size
+    })
 
     val heightModifier = if (carousel.baseView.height.contains("%")) {
         val height = carousel.baseView.height.split("%").firstOrNull()?.toIntOrNull()
@@ -90,7 +92,6 @@ fun CarouselComponent(
     ) {
         HorizontalPager(
             state = pagerState,
-            pageCount = carousel.items.size,
             modifier = border
                 .padding(
                     top = Dp(carousel.baseView.padding.top.toFloat()),
