@@ -103,4 +103,7 @@ dependencies {
     //coil
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("io.coil-kt:coil-gif:2.4.0")
+
+    //scanner
+    implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 }
