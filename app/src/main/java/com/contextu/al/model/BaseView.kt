@@ -8,5 +8,5 @@ open class BaseView {
     var padding: Margin = Margin()
     var margin: Margin = Margin()
     var backGroundColor = 0
-    val alignment: String = Alignment.center.name
+    val alignment: String = Alignments.center.name
 }
