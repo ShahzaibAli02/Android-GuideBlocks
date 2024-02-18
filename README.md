@@ -1,7 +1,7 @@
 # Android-GuideBlocks
 
 This is a shared open source repository for GuideBlocks that can be used in Android Apps.
-You can use any of these GuideBlocks here in your App in Conjunction with the Contextual Android SDK and an account at https://dashboard.contextu.al
+You can use any of these GuideBlocks here in your App in Conjunction with the Contextual Android SDK and an account at https://dashboard.contextu.al 
 
 ## Using GuideBlocks
 
@@ -20,8 +20,11 @@ There are two ways to use GuideBlocks:
 
 1. In your build.gradle add:
 
+
+GuideBlock current version: ![JitPack](https://img.shields.io/jitpack/version/com.github.GuideBlocks-org/Android-GuideBlocks)
+
 ```
-implementation 'com.github.GuideBlocks-org:Android-GuideBlocks:0.0.4', {
+implementation 'com.github.GuideBlocks-org:Android-GuideBlocks:<LATEST_VERSION>', {
         exclude group: 'com.google.android.material'
         exclude group: 'com.github.bumptech.glide'
     }

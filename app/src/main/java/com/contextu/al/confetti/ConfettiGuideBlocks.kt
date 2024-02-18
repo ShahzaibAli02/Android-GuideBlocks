@@ -1,20 +1,31 @@
 package com.contextu.al.confetti
 
 import android.app.Activity
-import android.view.ViewGroup
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
+import android.view.Window
 import com.contextu.al.R
 import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import nl.dionsegijn.konfetti.xml.KonfettiView
+import nl.dionsegijn.konfetti.xml.listeners.OnParticleSystemUpdateListener
 import java.util.concurrent.TimeUnit
 
 
-class ConfettiGuideBlocks(private val activity: Activity) {
+class ConfettiGuideBlocks(private val activity: Activity): Dialog(activity) {
 
-    fun show(): KonfettiView{
-        val view = activity.layoutInflater.inflate(R.layout.konfetti, null, true)
-        val viewGroup = (activity.findViewById(android.R.id.content) as ViewGroup).getChildAt(0) as ViewGroup
+    private lateinit var viewKonfetti: KonfettiView
+    init {
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window?.setDimAmount(0f)
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.konfetti)
         val party = Party(
             speed = 0f,
             maxSpeed = 30f,
@@ -24,11 +35,21 @@ class ConfettiGuideBlocks(private val activity: Activity) {
             position = Position.Relative(0.5, 0.3),
             emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100)
         )
-        val viewKonfetti = view.findViewById<KonfettiView>(R.id.konfettiView)
-        viewGroup.addView(viewKonfetti)
+        viewKonfetti = findViewById<KonfettiView>(R.id.konfettiView)
         viewKonfetti.start(party)
-        return viewKonfetti
     }
 
+    fun show(onStart: (inputStart: Unit) -> Unit, onEnd: (inputEnd: Unit) -> Unit){
+        viewKonfetti.onParticleSystemUpdateListener = object : OnParticleSystemUpdateListener{
+            override fun onParticleSystemEnded(view: KonfettiView, party: Party, activeSystems: Int) {
+                onEnd
+                dismiss()
+            }
 
+            override fun onParticleSystemStarted(view: KonfettiView, party: Party, activeSystems: Int) {
+                onStart
+            }
+
+        }
+    }
 }
