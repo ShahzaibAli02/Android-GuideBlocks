@@ -1,4 +1,4 @@
-package com.contextu.al.components
+package com.contextu.al.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

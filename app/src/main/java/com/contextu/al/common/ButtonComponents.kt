@@ -1,4 +1,4 @@
-package com.contextu.al.components
+package com.contextu.al.common
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
