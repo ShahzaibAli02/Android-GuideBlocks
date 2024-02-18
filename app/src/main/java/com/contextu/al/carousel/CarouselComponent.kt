@@ -39,7 +39,7 @@ import coil.request.ImageRequest
 import com.contextu.al.common.AppTextView
 import com.contextu.al.common.ButtonComponent
 import com.contextu.al.common.toSP
-import com.contextu.al.model.CarouselModel
+import com.contextu.al.common.model.CarouselModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

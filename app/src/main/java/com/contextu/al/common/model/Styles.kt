@@ -1,4 +1,4 @@
-package com.contextu.al.model
+package com.contextu.al.common.model
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign

@@ -1,4 +1,4 @@
-package com.contextu.al.model
+package com.contextu.al.common.model
 
 data class CarouselModel(
     val items: List<Item> = emptyList(),
