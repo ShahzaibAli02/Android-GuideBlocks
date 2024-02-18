@@ -1,0 +1,39 @@
+```
+Title: MyChecklist
+Author: Daniel Quah
+Email: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "OpenChecklist",
+  "tasks": [
+    {
+      "name": "Set My Tag",
+      "action": "SetTag",
+      "action_data": {
+        "key": "mytag",
+        "value": "1234"
+      }
+    },
+    {
+      "name": "Visit Inbox",
+      "action": "gotoScreen",
+      "action_data": {
+        "deeplink": "airbnb_contextual://screen/inbox"
+      }
+    },
+    {
+      "name": "Visit Profile",
+      "action": "gotoScreen",
+      "action_data": {
+        "deeplink": "airbnb_contextual://screen/profile"
+      }
+    }
+  ]
+
+}
+```
+
