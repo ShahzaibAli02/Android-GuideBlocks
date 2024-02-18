@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     id("maven-publish")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -76,10 +77,12 @@ dependencies {
     implementation("nl.dionsegijn:konfetti-xml:2.0.4")
     val appcompat_version = "1.6.1"
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
 
     implementation("androidx.appcompat:appcompat:$appcompat_version")
     implementation("com.google.android.material:material:1.11.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
 
     //NEW CHANGES
     //COMPOSE CODE
@@ -105,5 +108,5 @@ dependencies {
     implementation("io.coil-kt:coil-gif:2.4.0")
 
     //scanner
-    implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
+    implementation("com.google.mlkit:barcode-scanning:17.0.3")
 }

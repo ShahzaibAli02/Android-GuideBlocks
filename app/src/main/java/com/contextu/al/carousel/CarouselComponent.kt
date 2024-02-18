@@ -36,10 +36,10 @@ import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
-import com.contextu.al.components.AppTextView
-import com.contextu.al.components.ButtonComponent
-import com.contextu.al.components.toSP
-import com.contextu.al.model.CarouselModel
+import com.contextu.al.common.AppTextView
+import com.contextu.al.common.ButtonComponent
+import com.contextu.al.common.toSP
+import com.contextu.al.common.model.CarouselModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

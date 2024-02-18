@@ -14,10 +14,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.contextu.al.common.ContainerComponent
 import com.contextu.al.common.ImageComponent
-import com.contextu.al.components.AppTextView
-import com.contextu.al.components.ButtonComponent
+import com.contextu.al.common.AppTextView
+import com.contextu.al.common.ButtonComponent
 import com.contextu.al.model.customguide.GuidePayload
-import com.contextu.al.model.toBoxAlignment
+import com.contextu.al.common.model.toBoxAlignment
 
 @SuppressLint("UnrememberedMutableState")
 @Composable

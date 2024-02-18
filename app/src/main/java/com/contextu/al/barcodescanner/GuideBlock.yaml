@@ -1,0 +1,23 @@
+```
+Title: Scanner
+Author: Karthick
+Email: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: circlevideo
+Description: Launch scanner screen, where following extensibility is mandatory, wight and height should ge in screen (%)
+Acknowledgements:
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  {
+    "guideBlockKey": "QRScanner",
+    "properties": {
+      "title": "Title",
+      "description": "Description",
+      "width": 70,
+      "height": 80
+    }
+  }
+}
+```
+

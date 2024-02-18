@@ -1,4 +1,4 @@
-package com.contextu.al.components
+package com.contextu.al.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,8 +13,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import com.contextu.al.model.toBoxAlignment
-import com.contextu.al.model.toTextAlign
+import com.contextu.al.common.model.toBoxAlignment
+import com.contextu.al.common.model.toTextAlign
 
 @Composable
 fun AppTextView(

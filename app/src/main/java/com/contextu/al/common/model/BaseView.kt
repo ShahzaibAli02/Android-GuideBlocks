@@ -1,4 +1,4 @@
-package com.contextu.al.model
+package com.contextu.al.common.model
 
 open class BaseView {
     var height: String = "0"

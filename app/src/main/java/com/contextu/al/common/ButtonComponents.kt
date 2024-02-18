@@ -1,4 +1,4 @@
-package com.contextu.al.components
+package com.contextu.al.common
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
@@ -17,8 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import com.contextu.al.model.ButtonModel
-import com.contextu.al.model.toBoxAlignment
+import com.contextu.al.common.model.ButtonModel
+import com.contextu.al.common.model.toBoxAlignment
 import com.contextu.al.model.ui.Button
 import com.contextu.al.model.ui.Text
 
