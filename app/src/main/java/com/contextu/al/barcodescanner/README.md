@@ -1,4 +1,4 @@
-## circlevideo
+## qrScanner
 
 Everyone loves Scanner! This is a simple example to get you started with Contextual Extensibility without needing to hard-code your changes every time you want to celebrate with the user.
 
@@ -18,22 +18,25 @@ implementation 'com.github.GuideBlocks-org:Android-GuideBlocks:0.0.4', {
 **In your activities where you want to use GuideBlocks add (for example):**
 
 ```
-import com.contextu.al.circlevideo.CircleVideoGuideBlocks
-import com.contextu.al.core.CtxEventObserver
+import com.contextu.al.barcodescanner.BarcodeScanningActivity
 ```
 
 for the GuideBlock you wish to use, then add 
 
 ```
+private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data
+            val barcodeData = intent?.getStringExtra(BarcodeScanningActivity.BARCODE_DATA)
+        }
+    }
+    
         val qrScanner = "QRScanner"
         Contextual.registerGuideBlock(qrScanner).observe(this){
             contextualContainer ->
             if(contextualContainer.guidePayload.guide.guideBlock.contentEquals(qrScanner)){
-               contextualContainer.guidePayload.guide.extraJson?.let {
-               val property = Gson().fromJson(it, BarCodeModel::class.java)
-                startActivity(BarcodeScanningActivity.newIntent(context, property))
-               }
-             
+               val property = Gson().toJson(contextualContainer.guidePayload.guide)
+               startForResult.launch(BarcodeScanningActivity.newIntent(context, property))
             }
         }
 ```
@@ -50,14 +53,14 @@ for the GuideBlock you wish to use, then add
    {
    "guideBlockKey": "QRScanner",
    "properties": {
-   "title": "Title",
-   "description": "Description",
    "width": 70,
-   "height": 80
-   }
+   "height": 80,
+   "show_qr_result": true
+   },
+   "iconProperties":{
+   "color":123
+   },
+   "tag":"last_qr_scan"
    }
    `
-7. If you are still in Preview Mode, then you should see the Announcement will magically change to confetti
-8. Change the Title and Content and buttons. Play around with it and see the results.
-9. Save the guide and show to your Product Team, once you release this version of the App they can launch confetti to whoever they want, whenever they want.
 
