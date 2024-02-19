@@ -11,13 +11,11 @@ data class BarCodeModel(
 ): Parcelable {
     @Parcelize
     data class Properties(
-        @SerializedName("title")
-        val title: String?,
-        @SerializedName("description")
-        val description: String?,
         @SerializedName("width")
         val width: Float? = 70f,
         @SerializedName("height")
         val height: Float? = 35f,
+        @SerializedName("show_qr_result")
+        val showResult: Boolean = false
     ): Parcelable
 }

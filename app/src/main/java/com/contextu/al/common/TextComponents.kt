@@ -40,7 +40,6 @@ fun AppTextView(
             Text(
                 text = text ?: "",
                 modifier = modifier
-                    .fillMaxWidth()
                     .align(textAlign.toBoxAlignment()),
                 fontSize = fontSize.toSP(),
                 fontWeight = if (fontWeight?.contains("bold", ignoreCase = true) == true)

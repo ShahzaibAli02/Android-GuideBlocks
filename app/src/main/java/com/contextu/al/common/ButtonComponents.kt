@@ -93,7 +93,10 @@ fun ButtonComponent(
                         fontSize = fontSize,
                         fontFamily = fontFamily
                     )
-                    AppTextView(textProperties = text)
+                    AppTextView(
+                        textProperties = text,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         }
