@@ -16,8 +16,8 @@
 
   </com.contextu.al.barcodescanner.camera.CameraSourcePreview>
 
-  <include
-      layout="@layout/top_action_bar_in_live_camera"
+  <androidx.compose.ui.platform.ComposeView
+      android:id="@+id/scannerComposeView"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="top"/>

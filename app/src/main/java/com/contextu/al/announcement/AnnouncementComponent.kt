@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
@@ -49,10 +50,12 @@ fun AnnouncementComponent(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         AppTextView(
-                            textProperties = guidePayload.guide.titleText
+                            textProperties = guidePayload.guide.titleText,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         AppTextView(
-                            textProperties = guidePayload.guide.contentText
+                            textProperties = guidePayload.guide.contentText,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         guidePayload.guide.buttons.nextButton?.let {
                             ButtonComponent(buttonModel = it) {
