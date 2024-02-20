@@ -24,20 +24,19 @@ import com.contextu.al.barcodescanner.BarcodeScanningActivity
 for the GuideBlock you wish to use, then add 
 
 ```
-private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val intent = result.data
-            val barcodeData = intent?.getStringExtra(BarcodeScanningActivity.BARCODE_DATA)
-        }
-    }
     
         val qrScanner = "QRScanner"
         Contextual.registerGuideBlock(qrScanner).observe(this){
             contextualContainer ->
             if(contextualContainer.guidePayload.guide.guideBlock.contentEquals(qrScanner)){
-               val property = Gson().toJson(contextualContainer.guidePayload.guide)
-               startForResult.launch(BarcodeScanningActivity.newIntent(context, property))
-            }
+               BarcodeScannerGuideBlock(
+            (activity)
+        ) {
+            
+        }.also {
+            it.showGuideBlock(contextualContainer.guidePayload)
+        }
+       }
         }
 ```
 
