@@ -1,7 +1,6 @@
 package com.contextu.al.openchecklist
 
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -106,7 +104,7 @@ fun OpenChecklist(
                             Text(
                                 text = it.name,
                                 style = TextStyle(fontSize = 16.sp),
-                                color = if(index % 2 == 0) Color.Gray else Color.Black
+                                color = if(it.checked) Color.Gray else Color.Black
                             )
 
                             if(it.checked){
@@ -126,8 +124,7 @@ fun OpenChecklist(
                                                 viewModel.setTag(it.actionData.key, it.actionData.value)
                                             }
 
-                                            viewModel.setTaskAsChecked(it)
-                                            viewModel.updateData(contextualContainer)
+                                            viewModel.setTaskAsChecked(index)
                                         },
                                     painter = painterResource(id = R.drawable.ico_checkbox_unchecked),
                                     contentDescription = "icon_checked"
