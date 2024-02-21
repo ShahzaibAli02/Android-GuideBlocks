@@ -31,10 +31,10 @@ for the GuideBlock you wish to use, then add
             if(contextualContainer.guidePayload.guide.guideBlock.contentEquals(qrScanner)){
                BarcodeScannerGuideBlock(
             (activity)
-        ) {
+        ) { barcodeResult ->
             
         }.also {
-            it.showGuideBlock(contextualContainer.guidePayload)
+            it.showGuideBlock(contextualContainer)
         }
        }
         }

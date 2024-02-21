@@ -108,7 +108,7 @@ class BarcodeScanningActivity : AppCompatActivity() {
                 MaterialTheme {
                     ContainerComponent(guidePayload = GuidePayload(
                         guide = contextualBase,
-                        {}, {}, {}, {}, {}
+                        {}, {}, {}, {}, {}, {}
                     )) {
                         Column {
                             Row(
