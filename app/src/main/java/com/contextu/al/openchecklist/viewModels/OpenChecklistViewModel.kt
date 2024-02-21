@@ -1,6 +1,7 @@
 package com.contextu.al.openchecklist.viewModels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.contextu.al.model.customguide.ContextualContainer
 import com.contextu.al.openchecklist.model.OpenChecklistTask
 import com.contextu.al.openchecklist.model.parsJSONtoTaskList
@@ -16,11 +17,27 @@ class OpenChecklistViewModel : ViewModel(){
     private val _title = MutableStateFlow<String>("")
     var title = _title.asStateFlow()
 
-    private val _tasks = MutableStateFlow<List<OpenChecklistTask>>(emptyList())
+    private val _tasks = MutableStateFlow<ArrayList<OpenChecklistTask>>(ArrayList())
     var tasks = _tasks.asStateFlow()
 
     private val _contextualContainer = MutableStateFlow<ContextualContainer?>(null)
-    var contextualContainer = _contextualContainer.asStateFlow()
+
+    init{
+        viewModelScope.launch(Dispatchers.IO) {
+            tasks.collect {
+                it.forEachIndexed { index, task ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        _contextualContainer.value?.let { container ->
+                            container.tagManager.getTag("checklist_row_$index").collectLatest { tags ->
+                                val checked = tags?.tagStringValue ?: ""
+                                _tasks.value[index].checked = checked == "checked"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     fun updateData(contextualContainer: ContextualContainer){
         _title.value = contextualContainer.guidePayload.guide.titleText.text ?: ""
@@ -28,18 +45,24 @@ class OpenChecklistViewModel : ViewModel(){
 
         _contextualContainer.value = contextualContainer
 
-        _tasks.value.forEach {
+        _tasks.value.forEachIndexed { index, task ->
             CoroutineScope(Dispatchers.IO).launch {
-                contextualContainer.tagManager.getTag(it.checkedKey()).collectLatest { tags ->
-                    val checked = tags?.tagStringValue ?: ""
-                    it.checked = checked == "true"
+                _contextualContainer.value?.let { container ->
+                    container.tagManager.getTag("checklist_row_$index").collectLatest { tags ->
+                        val checked = tags?.tagStringValue ?: ""
+                        _tasks.value[index].checked = checked == "checked"
+                    }
                 }
             }
         }
     }
 
-    fun setTaskAsChecked(task: OpenChecklistTask){
-        _contextualContainer.value?.tagManager?.setStringTag(task.checkedKey(),"true")
+    fun setTaskAsChecked(index: Int){
+        CoroutineScope(Dispatchers.IO).launch {
+            _contextualContainer.value?.tagManager?.setStringTag("checklist_row_$index", "checked")?.collectLatest {
+                updateData(_contextualContainer.value!!)
+            }
+        }
     }
 
     fun setTag(key:String?, value:String?){

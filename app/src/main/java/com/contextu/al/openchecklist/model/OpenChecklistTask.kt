@@ -9,12 +9,7 @@ class OpenChecklistTask(
     val action: OpenChecklistTaskAction,
     val actionData: OpenChecklistTaskActionData,
     var checked: Boolean
-){
-    var id: String = name.lowercase().trim().replace(" ","_")
-    fun checkedKey(): String {
-        return id + "_checked"
-    }
-}
+)
 
 data class OpenChecklistTaskActionData(
     val deepLink: String? = null,
@@ -28,9 +23,9 @@ enum class OpenChecklistTaskAction{
     Undefined
 }
 
-fun parsJSONtoTaskList(json: String): List<OpenChecklistTask> {
+fun parsJSONtoTaskList(json: String): ArrayList<OpenChecklistTask> {
 
-    val list: MutableList<OpenChecklistTask> = mutableListOf()
+    val list: ArrayList<OpenChecklistTask> = ArrayList()
 
     try {
         val jsonObject: JSONObject = JSONObject(json)
