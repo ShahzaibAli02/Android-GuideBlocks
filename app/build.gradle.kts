@@ -99,16 +99,8 @@ dependencies {
         exclude(group = "androidx.room")
     }
 
-//    implementation(group="com.contextu.al.dev",name="contextual",version = "3.0.1+72de67a2") {
-//        exclude(group = "com.github.bumptech.glide")
-//        exclude(group = "androidx.room")
-//    }
-
-  
-
     implementation("com.google.code.gson:gson:2.8.8")
-
     implementation("com.trafi:rating-seek-bar:0.4-alpha")
-    implementation("com.google.mlkit:barcode-scanning:17.0.3")
+
 
 }
