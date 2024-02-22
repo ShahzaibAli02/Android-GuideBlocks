@@ -109,5 +109,6 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.8")
 
     implementation("com.trafi:rating-seek-bar:0.4-alpha")
+    implementation("com.google.mlkit:barcode-scanning:17.0.3")
 
 }
