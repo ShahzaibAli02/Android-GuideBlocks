@@ -32,6 +32,8 @@ class MultiSelectSurveyGuideBlock (val activity:Activity,val contextualContainer
                             updatedMultiChoice.add(multiChoiceItems[index])
                         }
                     }
+//                    contextualContainer.guidePayload.complete.onClick(null)
+                    contextualContainer.guidePayload.nextStep.onClick(null)
                     jsonObject.addProperty("any-other-custom-data", "Example custom data")
                     contextualContainer.operations.submitFeedback(contextualContainer.guidePayload.guide.feedID,
                         Feedback(contextualContainer.guidePayload.guide.feedBackTitle ?: "", updatedMultiChoice, jsonObject)
@@ -41,6 +43,9 @@ class MultiSelectSurveyGuideBlock (val activity:Activity,val contextualContainer
                     if (feedBackData.i == 1) {
                         promptUserForInput("Please explain why you chose this ?")
                     }
+                }
+                .setOnDismissListener {
+                    contextualContainer.guidePayload.dismissGuide.onClick(null)
                 }
                 .create()
                 .show()

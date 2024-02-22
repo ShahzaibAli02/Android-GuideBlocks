@@ -29,7 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import com.contextu.al.model.customguide.ContextualContainer
+import com.contextu.al.model.customguide.Feedback
 import com.trafi.ratingseekbar.RatingSeekBar
+import com.google.gson.JsonObject as JsonObject1
 
 class NPSRatingBarGuideBlock : ComponentActivity()
 {
@@ -38,7 +40,6 @@ class NPSRatingBarGuideBlock : ComponentActivity()
     @Composable
     fun show(contextualContainer: ContextualContainer,onCancel:()->Unit,onSubmit:(progress:Int)->Unit)
     {
-
         val mGuide=contextualContainer.guidePayload.guide
         var mProgress = remember { 0 }
         var isShowing by remember { mutableStateOf(false) }
@@ -49,6 +50,7 @@ class NPSRatingBarGuideBlock : ComponentActivity()
         {
             Dialog(onDismissRequest = {
                 isShowing=false
+                contextualContainer.guidePayload.dismissGuide.onClick(null)
                 onCancel()
         }) {
 
@@ -77,12 +79,23 @@ class NPSRatingBarGuideBlock : ComponentActivity()
                             isShowing=false
                             onCancel()
                         }) {
+                            contextualContainer.guidePayload.dismissGuide.onClick(null)
                             Text(text = mGuide.buttons.prevButton?.text?:"Cancel", fontSize = MaterialTheme.typography.titleMedium.fontSize)
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         ElevatedButton(onClick = {
+
+                            val jsonObject = JsonObject1()
+                            val updatedMultiChoice = arrayListOf<String>()
+                            jsonObject.addProperty("user_rating", mProgress)
+                            contextualContainer.operations.submitFeedback(contextualContainer.guidePayload.guide.feedID,
+                                Feedback(contextualContainer.guidePayload.guide.feedBackTitle ?: "", updatedMultiChoice, jsonObject)
+                            )
+
                             isShowing=false
                             onSubmit(mProgress)
+//                            contextualContainer.guidePayload.complete.onClick(null)
+                            contextualContainer.guidePayload.nextStep.onClick(null)
                         }) {
                             Text(text =  mGuide.buttons.nextButton?.text?:"Submit", fontSize = MaterialTheme.typography.titleMedium.fontSize)
                         }

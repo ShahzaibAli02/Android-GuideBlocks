@@ -1,8 +1,10 @@
 package com.contextu.al.mychecklist
 
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -90,15 +92,26 @@ class MyCheckListGuideBlocks
     private fun ShowBottomSheet(title: String, taskList: List<Task>)
     {
 
+        val contextualContainer=LocalContextualContainer.current
         val bottomSheetState = rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false))
         val coroutineScope = rememberCoroutineScope()
         BottomSheetScaffold(
             scaffoldState = bottomSheetState, sheetContent = {
 
-                Row(modifier = Modifier.align(Alignment.End)) {
+                Row(modifier = Modifier.align(Alignment.End).clickable {
+                    contextualContainer?.guidePayload?.clickInside?.onClick(null)
+                }) {
                     IconButton(modifier = Modifier.size(20.dp), onClick = {
-                        coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
+                        coroutineScope.launch {
+                            bottomSheetState.bottomSheetState.hide()
 
+                            if(taskList.all { it.getChecked(contextualContainer!!) })
+                            {
+//                                contextualContainer?.guidePayload?.complete?.onClick(null)
+                                contextualContainer?.guidePayload?.nextStep?.onClick(null)
+                            }
+                            else   contextualContainer?.guidePayload?.dismissGuide?.onClick(null)
+                        }
                     }) {
                         Icon(Icons.Default.Close, contentDescription = "Close")
                     }
