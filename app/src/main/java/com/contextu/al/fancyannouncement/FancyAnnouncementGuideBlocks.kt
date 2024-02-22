@@ -1,16 +1,16 @@
 package com.contextu.al.fancyannouncement
 
 import android.app.Activity
-import android.app.Dialog
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.contextu.al.R
 
 
-class FancyAnnouncementGuideBlocks(private val activity: Activity): Dialog(activity) {
+class FancyAnnouncementGuideBlocks(private val activity: Activity): AlertDialog(activity) {
 
     fun show(title: String,
              content: String,
@@ -38,10 +38,10 @@ class FancyAnnouncementGuideBlocks(private val activity: Activity): Dialog(activ
 
         val createAccountButton = this.findViewById<Button>(R.id.create_button)
         createAccountButton?.text = positiveText
-        createAccountButton.setOnClickListener(positiveButtonListener)
+        createAccountButton?.setOnClickListener(positiveButtonListener)
 
         val cancelButton = this.findViewById<Button>(R.id.cancel_button)
         cancelButton?.text = negativeText
-        cancelButton.setOnClickListener(negativeButtonListener)
+        cancelButton?.setOnClickListener(negativeButtonListener)
     }
 }

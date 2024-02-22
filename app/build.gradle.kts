@@ -102,8 +102,10 @@ dependencies {
         exclude(group = "androidx.room")
     }
     implementation("com.google.code.gson:gson:2.8.8")
-
+    
     //coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-gif:2.4.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("io.coil-kt:coil-gif:2.4.0")
 
