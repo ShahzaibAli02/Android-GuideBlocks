@@ -1,0 +1,12 @@
+Title: MultiSelectSurvey
+Author: Marc Stroebel
+Email: support@contextu.al
+TestApp: https://github.com/contextu-al/AirBnB-iOS
+TestAppBranch: confetti
+Description: Allow a survey that takes more than one selection from the user
+Acknowledgements:
+Screenshot: https://github.com/GuideBlocks-org/iOS-GuideBlocks/blob/main/Sources/iOS-GuideBlocks/MultiSelectSurvey/multiselectsurvey-guideblock.png
+Video:
+Extensibility: {
+  "guideBlockKey": "MultiSelectSurvey"
+}

@@ -56,7 +56,7 @@ java {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17    
+    sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
 
@@ -106,7 +106,10 @@ dependencies {
     //coil
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("io.coil-kt:coil-gif:2.4.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-gif:2.4.0")
 
     //scanner
     implementation("com.google.mlkit:barcode-scanning:17.0.3")
+    implementation("com.trafi:rating-seek-bar:0.4-alpha")
 }
