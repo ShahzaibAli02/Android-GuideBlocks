@@ -15,6 +15,7 @@ import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
+import com.contextu.al.extensions.toBoxModifier
 import com.contextu.al.model.ui.Image
 
 @Composable
@@ -25,35 +26,7 @@ fun ImageComponent(
 ) {
 
     with(image) {
-        val heightModifier = if (height?.contains("%") == true) {
-            val height = height?.split("%")?.firstOrNull()?.toIntOrNull()
-            height?.let {
-                modifier.fillMaxHeight((it / 100f))
-            } ?: modifier
-        } else {
-            val height = height?.toFloatOrNull()
-            height?.let {
-                if (it >= 0)
-                    modifier.height(Dp(it))
-                else
-                    modifier.height(Dp(60f))
-            } ?: modifier
-        }
-
-        val widthModifier = if (width?.contains("%") == true) {
-            val height = width?.split("%")?.firstOrNull()?.toIntOrNull()
-            height?.let {
-                heightModifier.fillMaxWidth((it / 100f))
-            } ?: heightModifier
-        } else {
-            val height = width?.toFloatOrNull()
-            height?.let {
-                if (it >= 0)
-                    heightModifier.width(Dp(it))
-                else
-                    heightModifier.fillMaxWidth()
-            } ?: heightModifier
-        }
+        val boxModifier = toBoxModifier(modifier = modifier)
 
         AsyncImage(
             imageLoader = ImageLoader.Builder(LocalContext.current)
@@ -71,7 +44,7 @@ fun ImageComponent(
 
             contentDescription = null,
             contentScale = contentScale,
-            modifier = widthModifier
+            modifier = boxModifier
         )
     }
 }
