@@ -18,26 +18,24 @@ Extensibility: {
     }
   }
 Registration: |
-  fun launchCarousel() {
-          val carousel = "Carousel"
-          Contextual.registerGuideBlock(carousel).observe(this) { contextualContainer ->
-              if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(carousel)) {
-                  setContent {
-                      MaterialTheme {
-                          CarouselComponent(contextualContainer = contextualContainer) {
-                              when (it) {
-                                  is CarouselAction.OnSkip -> {
+val carousel = "Carousel"
+Contextual.registerGuideBlock(carousel).observe(this) { contextualContainer ->
+    if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(carousel)) {
+        setContent {
+            MaterialTheme {
+                CarouselComponent(contextualContainer = contextualContainer) {
+                    when (it) {
+                        is CarouselAction.OnSkip -> {
   
-                                  }
+                        }
   
-                                  is CarouselAction.OnButtonClick -> {
+                        is CarouselAction.OnButtonClick -> {
   
-                                  }
-                              }
-                          }
-                      }
-                  }
-              }
-          }
-      }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 ```
