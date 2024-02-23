@@ -1,21 +1,16 @@
-```
+---
 Title: Carousel
 Author: Karthick
 Contact: https://github.com/KarthickCk
 TestApp: https://github.com/contextu-al/FavDish
 TestAppBranch: carousel
-Description: Launch carousel screen, where following extensibility is mandatory and where the "[skip]" is optional
+Description: Launch carousel screen, where following extensibility is mandatory and where the skip is optional
 Acknowledgements:
 Screenshot: https://drive.google.com/file/d/13DCAIa6uClA1Wl10MNOh2PgJqoW6JbdI/view?usp=sharing
 Video:
-Extensibility: {
-  {
-    "guideBlockKey": "Carousel",
-    "skip": {
-      "text": "Skip",
-      "color": "#d3d3d3",
-      "size": 12
-    }
-  }
-```
-
+Extensibility:
+  guideBlockKey: Carousel
+  skip: # nullable
+    text: Skip
+    color: #d3d3d3
+    size: 12
