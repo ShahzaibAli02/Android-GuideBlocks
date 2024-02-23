@@ -1,4 +1,4 @@
----
+```
 Title: BarCodeScanner
 Author: Karthick
 Contact: https://github.com/KarthickCk
@@ -8,15 +8,33 @@ Description: Launch scanner screen and scans the qr and barcode, where following
 Acknowledgements: Google's scanner ML kit repo https://github.com/googlesamples/mlkit/tree/master/android/material-showcase
 Screenshot: https://drive.google.com/file/d/1Iu4KNUJWnTK8CbzRJsmksyul86jmorAo/view?usp=sharing
 Video:
-Extensibility:
-  guideBlockKey: BarCodeScanner
-  properties:
-      width: 70
-      height: 80
-      show_qr_result: true
-  iconProperties:
-      color: 123
-  tag: last_qr_scan
-
-
-
+Extensibility: {
+  {
+    "guideBlockKey": "QRScanner",
+    "properties": {
+      "width": 70,
+      "height": 80,
+      "show_qr_result": true
+    },
+    "iconProperties": {
+      "color": 123
+    },
+    "tag": "last_qr_scan"
+  }
+}
+Registration: |
+  fun launchBarcode() {
+      val barCodeScanner = "BarCodeScanner"
+      Contextual.registerGuideBlock(barCodeScanner).observe(this) { contextualContainer ->
+          if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(barCodeScanner)) {
+              BarcodeScannerGuideBlock(
+                  (this)
+              ) { barcodeResult ->
+  
+              }.also {
+                  it.showGuideBlock(contextualContainer)
+              }
+          }
+      }
+  }
+```
