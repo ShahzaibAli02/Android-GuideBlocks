@@ -25,8 +25,8 @@ for the GuideBlock you wish to use, then add
 
 ```
     
-        val OnBoarding = "OnBoarding"
-        Contextual.registerGuideBlock(OnBoarding).observe(this) { container ->
+        val carousel = "Carousel"
+        Contextual.registerGuideBlock(carousel).observe(this) { container ->
             CarouselComponent(contextualContainer = container) {
                     when (it) {
                         is CarouselAction.OnSkip -> {
@@ -51,7 +51,7 @@ for the GuideBlock you wish to use, then add
 6. Now go to the Extensibility section in the sidebar and paste in the JSON as follows:
    `
    {
-   "guideBlockKey": "OnBoarding",
+   "guideBlockKey": "Carousel",
    "skip": {
    "text":"Skip",
    "color": "#d3d3d3",

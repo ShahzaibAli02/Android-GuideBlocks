@@ -1,16 +1,16 @@
 ```
-Title: QrScanner
+Title: BarCodeScanner
 Author: Karthick
-Email: support@contextu.al
+Email: https://github.com/KarthickCk
 TestApp: https://github.com/contextu-al/FavDish
 TestAppBranch: scanner-GB
-Description: Launch scanner screen, where following extensibility is mandatory, wight and height should ge in screen (%)
-Acknowledgements:
-Screenshot: 
-Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Description: Launch scanner screen, where following extensibility is mandatory, weight and height should be in %
+Acknowledgements: Google's scanner ML kit repo https://github.com/googlesamples/mlkit/tree/master/android/material-showcase
+Screenshot: https://drive.google.com/file/d/1Iu4KNUJWnTK8CbzRJsmksyul86jmorAo/view?usp=sharing
+Video: https://vimeo.com/863886653
 Extensibility: {
   {
-    "guideBlockKey": "QRScanner",
+    "guideBlockKey": "BarCodeScanner",
     "properties": {
       "width": 70,
       "height": 80,
