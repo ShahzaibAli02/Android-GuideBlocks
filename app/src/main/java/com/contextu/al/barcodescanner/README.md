@@ -1,6 +1,10 @@
-## qrScanner
+## barcodeScanner
 
 Everyone loves Scanner! This is a simple example to get you started with Contextual Extensibility without needing to hard-code your changes every time you want to celebrate with the user.
+
+Barcode GB launches the barcode scanning screen and send the result back to the caller, 
+additionally we can customize the option whether to show/hide the scanning result bottom sheet in the barcode code screen by using
+Extensibility property "[show_qr_result]"
 
 1. Create an account at [Contextual Dashboard](https://dashboard.contextu.al/ "Contextual Dashboard").
 2. Install the Contextual SDK following the instructions for IOS or Android.
@@ -25,10 +29,10 @@ for the GuideBlock you wish to use, then add
 
 ```
     
-        val qrScanner = "QRScanner"
-        Contextual.registerGuideBlock(qrScanner).observe(this){
+        val barCodeScanner = "BarCodeScanner"
+        Contextual.registerGuideBlock(barCodeScanner).observe(this){
             contextualContainer ->
-            if(contextualContainer.guidePayload.guide.guideBlock.contentEquals(qrScanner)){
+            if(contextualContainer.guidePayload.guide.guideBlock.contentEquals(barCodeScanner)){
                BarcodeScannerGuideBlock(
             (activity)
         ) { barcodeResult ->
@@ -50,7 +54,7 @@ for the GuideBlock you wish to use, then add
 6. Now go to the Extensibility section in the sidebar and paste in the JSON as follows:
    `
    {
-   "guideBlockKey": "QRScanner",
+   "guideBlockKey": "BarCodeScanner",
    "properties": {
    "width": 70,
    "height": 80,
