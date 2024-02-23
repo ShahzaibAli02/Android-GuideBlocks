@@ -1,7 +1,7 @@
 ```
 Title: OpenChecklist
 Author: Nikola Gocic
-Email: support@contextu.al
+Contact: support@contextu.al
 TestApp:  https://github.com/contextu-al/FavDish
 TestAppBranch: main
 Description: this GuideBlock will display a popup dialog with a text list, each row in the list has text that is read-only with a check box that is read-only. When the user touches a row it will execute some programatic action unique to each row.

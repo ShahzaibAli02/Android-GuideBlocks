@@ -1,6 +1,6 @@
 Title: MultiSelectSurvey
 Author: Marc Stroebel
-Email: support@contextu.al
+Contact: support@contextu.al
 TestApp: https://github.com/contextu-al/AirBnB-iOS
 TestAppBranch: confetti
 Description: Allow a survey that takes more than one selection from the user
@@ -9,4 +9,1078 @@ Screenshot: https://github.com/GuideBlocks-org/iOS-GuideBlocks/blob/main/Sources
 Video:
 Extensibility: {
   "guideBlockKey": "MultiSelectSurvey"
+}```
+Title: BarCodeScanner
+Author: Karthick
+Contact: https://github.com/KarthickCk
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: scanner-GB
+Description: Launch scanner screen and scans the qr and barcode, where following extensibility is mandatory, width and height should be in %
+Acknowledgements: Google's scanner ML kit repo https://github.com/googlesamples/mlkit/tree/master/android/material-showcase
+Screenshot: https://drive.google.com/file/d/1Iu4KNUJWnTK8CbzRJsmksyul86jmorAo/view?usp=sharing
+Video:
+Extensibility: {
+  {
+    "guideBlockKey": "QRScanner",
+    "properties": {
+      "width": 70,
+      "height": 80,
+      "show_qr_result": true
+    },
+    "iconProperties": {
+      "color": 123
+    },
+    "tag": "last_qr_scan"
+  }
 }
+Registration: |
+val barCodeScanner = "BarCodeScanner"
+Contextual.registerGuideBlock(barCodeScanner).observe(this) { contextualContainer ->
+    if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(barCodeScanner)) {
+        BarcodeScannerGuideBlock(
+            (this)
+        ) { barcodeResult ->
+  
+        }.also {
+            it.showGuideBlock(contextualContainer)
+        }
+    }
+}
+```
+```
+Title: OpenChecklist
+Author: Nikola Gocic
+Contact: support@contextu.al
+TestApp:  https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: this GuideBlock will display a popup dialog with a text list, each row in the list has text that is read-only with a check box that is read-only. When the user touches a row it will execute some programatic action unique to each row.
+Acknowledgements:
+Screenshot:
+Video:
+Extensibility: {
+  "guideBlockKey": "OpenChecklist",
+  "tasks": [
+    {
+      "name": "Set My Tag",
+      "action": "setTag",
+      "action_data": {
+        "key": "mytag",
+        "value": "1234"
+      }
+    },
+    {
+      "name": "Visit Inbox",
+      "action": "gotoScreen",
+      "action_data": {
+        "deep_link": "airbnbContextual://tab/inbox"
+      }
+    },
+    {
+      "name": "Visit Profile",
+      "action": "gotoScreen",
+      "action_data": {
+        "deep_link": "airbnbContextual://tab/profile"
+      }
+    }
+  ]
+}
+```
+
+```
+Title: Carousel
+Author: Karthick
+Contact: https://github.com/KarthickCk
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: carousel
+Description: Launch carousel screen, where following extensibility is mandatory and where the skip is optional
+Acknowledgements:
+Screenshot: https://drive.google.com/file/d/13DCAIa6uClA1Wl10MNOh2PgJqoW6JbdI/view?usp=sharing
+Video:
+Extensibility: {
+  {
+    "guideBlockKey": "OnBoarding",
+    "skip": {
+      "text": "Skip",
+      "color": "#d3d3d3",
+      "size": 12
+    }
+  }
+Registration: |
+val carousel = "Carousel"
+Contextual.registerGuideBlock(carousel).observe(this) { contextualContainer ->
+    if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(carousel)) {
+        setContent {
+            MaterialTheme {
+                CarouselComponent(contextualContainer = contextualContainer) {
+                    when (it) {
+                        is CarouselAction.OnSkip -> {
+  
+                        }
+  
+                        is CarouselAction.OnButtonClick -> {
+  
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+```
+Title: MyChecklist
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "OpenChecklist",
+  "tasks": [
+    {
+      "name": "Set My Tag",
+      "action": "SetTag",
+      "action_data": {
+        "key": "mytag",
+        "value": "1234"
+      }
+    },
+    {
+      "name": "Visit Inbox",
+      "action": "gotoScreen",
+      "action_data": {
+        "deeplink": "airbnb_contextual://screen/inbox"
+      }
+    },
+    {
+      "name": "Visit Profile",
+      "action": "gotoScreen",
+      "action_data": {
+        "deeplink": "airbnb_contextual://screen/profile"
+      }
+    }
+  ]
+
+}
+```
+
+```
+Title: CircleVideo
+Author: Jenisha Makadiya
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: circlevideo
+Description: Launch Circle Video to show any video in Circle to targeted users at any time with this low-code GuideBlock
+Acknowledgements:
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  "guideBlockKey": "CircleVideo"
+}
+```
+
+```
+Title: Confetti
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: confetti
+Description: Launch confetti to targeted users at any time with this low-code GuideBlock
+Acknowledgements: https://github.com/DanielMartinus/Konfetti
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  "guideBlockKey": "confetti"
+}
+```
+
+```
+Title: Fancy Announcement
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "FancyAnnouncement"
+}
+```
+
+```
+Title: NPSRatingBar
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "NPSRatingBar",
+}
+```
+
+```
+Title: BarCodeScanner
+Author: Karthick
+Contact: https://github.com/KarthickCk
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: scanner-GB
+Description: Launch scanner screen and scans the qr and barcode, where following extensibility is mandatory, width and height should be in %
+Acknowledgements: Google's scanner ML kit repo https://github.com/googlesamples/mlkit/tree/master/android/material-showcase
+Screenshot: https://drive.google.com/file/d/1Iu4KNUJWnTK8CbzRJsmksyul86jmorAo/view?usp=sharing
+Video:
+Extensibility: {
+  {
+    "guideBlockKey": "QRScanner",
+    "properties": {
+      "width": 70,
+      "height": 80,
+      "show_qr_result": true
+    },
+    "iconProperties": {
+      "color": 123
+    },
+    "tag": "last_qr_scan"
+  }
+}
+Registration: |
+val barCodeScanner = "BarCodeScanner"
+Contextual.registerGuideBlock(barCodeScanner).observe(this) { contextualContainer ->
+    if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(barCodeScanner)) {
+        BarcodeScannerGuideBlock(
+            (this)
+        ) { barcodeResult ->
+  
+        }.also {
+            it.showGuideBlock(contextualContainer)
+        }
+    }
+}
+```
+```
+Title: OpenChecklist
+Author: Nikola Gocic
+Contact: support@contextu.al
+TestApp:  https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: this GuideBlock will display a popup dialog with a text list, each row in the list has text that is read-only with a check box that is read-only. When the user touches a row it will execute some programatic action unique to each row.
+Acknowledgements:
+Screenshot:
+Video:
+Extensibility: {
+  "guideBlockKey": "OpenChecklist",
+  "tasks": [
+    {
+      "name": "Set My Tag",
+      "action": "setTag",
+      "action_data": {
+        "key": "mytag",
+        "value": "1234"
+      }
+    },
+    {
+      "name": "Visit Inbox",
+      "action": "gotoScreen",
+      "action_data": {
+        "deep_link": "airbnbContextual://tab/inbox"
+      }
+    },
+    {
+      "name": "Visit Profile",
+      "action": "gotoScreen",
+      "action_data": {
+        "deep_link": "airbnbContextual://tab/profile"
+      }
+    }
+  ]
+}
+```
+
+```
+Title: Carousel
+Author: Karthick
+Contact: https://github.com/KarthickCk
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: carousel
+Description: Launch carousel screen, where following extensibility is mandatory and where the skip is optional
+Acknowledgements:
+Screenshot: https://drive.google.com/file/d/13DCAIa6uClA1Wl10MNOh2PgJqoW6JbdI/view?usp=sharing
+Video:
+Extensibility: {
+  {
+    "guideBlockKey": "OnBoarding",
+    "skip": {
+      "text": "Skip",
+      "color": "#d3d3d3",
+      "size": 12
+    }
+  }
+Registration: |
+val carousel = "Carousel"
+Contextual.registerGuideBlock(carousel).observe(this) { contextualContainer ->
+    if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(carousel)) {
+        setContent {
+            MaterialTheme {
+                CarouselComponent(contextualContainer = contextualContainer) {
+                    when (it) {
+                        is CarouselAction.OnSkip -> {
+  
+                        }
+  
+                        is CarouselAction.OnButtonClick -> {
+  
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+```
+Title: MyChecklist
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "OpenChecklist",
+  "tasks": [
+    {
+      "name": "Set My Tag",
+      "action": "SetTag",
+      "action_data": {
+        "key": "mytag",
+        "value": "1234"
+      }
+    },
+    {
+      "name": "Visit Inbox",
+      "action": "gotoScreen",
+      "action_data": {
+        "deeplink": "airbnb_contextual://screen/inbox"
+      }
+    },
+    {
+      "name": "Visit Profile",
+      "action": "gotoScreen",
+      "action_data": {
+        "deeplink": "airbnb_contextual://screen/profile"
+      }
+    }
+  ]
+
+}
+```
+
+```
+Title: CircleVideo
+Author: Jenisha Makadiya
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: circlevideo
+Description: Launch Circle Video to show any video in Circle to targeted users at any time with this low-code GuideBlock
+Acknowledgements:
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  "guideBlockKey": "CircleVideo"
+}
+```
+
+```
+Title: Confetti
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: confetti
+Description: Launch confetti to targeted users at any time with this low-code GuideBlock
+Acknowledgements: https://github.com/DanielMartinus/Konfetti
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  "guideBlockKey": "confetti"
+}
+```
+
+```
+Title: Fancy Announcement
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "FancyAnnouncement"
+}
+```
+
+```
+Title: NPSRatingBar
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "NPSRatingBar",
+}
+```
+
+```
+Title: BarCodeScanner
+Author: Karthick
+Contact: https://github.com/KarthickCk
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: scanner-GB
+Description: Launch scanner screen and scans the qr and barcode, where following extensibility is mandatory, width and height should be in %
+Acknowledgements: Google's scanner ML kit repo https://github.com/googlesamples/mlkit/tree/master/android/material-showcase
+Screenshot: https://drive.google.com/file/d/1Iu4KNUJWnTK8CbzRJsmksyul86jmorAo/view?usp=sharing
+Video:
+Extensibility: {
+  {
+    "guideBlockKey": "QRScanner",
+    "properties": {
+      "width": 70,
+      "height": 80,
+      "show_qr_result": true
+    },
+    "iconProperties": {
+      "color": 123
+    },
+    "tag": "last_qr_scan"
+  }
+}
+Registration: |
+val barCodeScanner = "BarCodeScanner"
+Contextual.registerGuideBlock(barCodeScanner).observe(this) { contextualContainer ->
+    if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(barCodeScanner)) {
+        BarcodeScannerGuideBlock(
+            (this)
+        ) { barcodeResult ->
+  
+        }.also {
+            it.showGuideBlock(contextualContainer)
+        }
+    }
+}
+```
+```
+Title: OpenChecklist
+Author: Nikola Gocic
+Contact: support@contextu.al
+TestApp:  https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: this GuideBlock will display a popup dialog with a text list, each row in the list has text that is read-only with a check box that is read-only. When the user touches a row it will execute some programatic action unique to each row.
+Acknowledgements:
+Screenshot:
+Video:
+Extensibility: {
+  "guideBlockKey": "OpenChecklist",
+  "tasks": [
+    {
+      "name": "Set My Tag",
+      "action": "setTag",
+      "action_data": {
+        "key": "mytag",
+        "value": "1234"
+      }
+    },
+    {
+      "name": "Visit Inbox",
+      "action": "gotoScreen",
+      "action_data": {
+        "deep_link": "airbnbContextual://tab/inbox"
+      }
+    },
+    {
+      "name": "Visit Profile",
+      "action": "gotoScreen",
+      "action_data": {
+        "deep_link": "airbnbContextual://tab/profile"
+      }
+    }
+  ]
+}
+```
+
+```
+Title: Carousel
+Author: Karthick
+Contact: https://github.com/KarthickCk
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: carousel
+Description: Launch carousel screen, where following extensibility is mandatory and where the skip is optional
+Acknowledgements:
+Screenshot: https://drive.google.com/file/d/13DCAIa6uClA1Wl10MNOh2PgJqoW6JbdI/view?usp=sharing
+Video:
+Extensibility: {
+  {
+    "guideBlockKey": "OnBoarding",
+    "skip": {
+      "text": "Skip",
+      "color": "#d3d3d3",
+      "size": 12
+    }
+  }
+Registration: |
+val carousel = "Carousel"
+Contextual.registerGuideBlock(carousel).observe(this) { contextualContainer ->
+    if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(carousel)) {
+        setContent {
+            MaterialTheme {
+                CarouselComponent(contextualContainer = contextualContainer) {
+                    when (it) {
+                        is CarouselAction.OnSkip -> {
+  
+                        }
+  
+                        is CarouselAction.OnButtonClick -> {
+  
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+```
+Title: MyChecklist
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "OpenChecklist",
+  "tasks": [
+    {
+      "name": "Set My Tag",
+      "action": "SetTag",
+      "action_data": {
+        "key": "mytag",
+        "value": "1234"
+      }
+    },
+    {
+      "name": "Visit Inbox",
+      "action": "gotoScreen",
+      "action_data": {
+        "deeplink": "airbnb_contextual://screen/inbox"
+      }
+    },
+    {
+      "name": "Visit Profile",
+      "action": "gotoScreen",
+      "action_data": {
+        "deeplink": "airbnb_contextual://screen/profile"
+      }
+    }
+  ]
+
+}
+```
+
+```
+Title: CircleVideo
+Author: Jenisha Makadiya
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: circlevideo
+Description: Launch Circle Video to show any video in Circle to targeted users at any time with this low-code GuideBlock
+Acknowledgements:
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  "guideBlockKey": "CircleVideo"
+}
+```
+
+```
+Title: Confetti
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: confetti
+Description: Launch confetti to targeted users at any time with this low-code GuideBlock
+Acknowledgements: https://github.com/DanielMartinus/Konfetti
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  "guideBlockKey": "confetti"
+}
+```
+
+```
+Title: Fancy Announcement
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "FancyAnnouncement"
+}
+```
+
+```
+Title: NPSRatingBar
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "NPSRatingBar",
+}
+```
+
+```
+Title: BarCodeScanner
+Author: Karthick
+Contact: https://github.com/KarthickCk
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: scanner-GB
+Description: Launch scanner screen and scans the qr and barcode, where following extensibility is mandatory, width and height should be in %
+Acknowledgements: Google's scanner ML kit repo https://github.com/googlesamples/mlkit/tree/master/android/material-showcase
+Screenshot: https://drive.google.com/file/d/1Iu4KNUJWnTK8CbzRJsmksyul86jmorAo/view?usp=sharing
+Video:
+Extensibility: {
+  {
+    "guideBlockKey": "QRScanner",
+    "properties": {
+      "width": 70,
+      "height": 80,
+      "show_qr_result": true
+    },
+    "iconProperties": {
+      "color": 123
+    },
+    "tag": "last_qr_scan"
+  }
+}
+Registration: |
+val barCodeScanner = "BarCodeScanner"
+Contextual.registerGuideBlock(barCodeScanner).observe(this) { contextualContainer ->
+    if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(barCodeScanner)) {
+        BarcodeScannerGuideBlock(
+            (this)
+        ) { barcodeResult ->
+  
+        }.also {
+            it.showGuideBlock(contextualContainer)
+        }
+    }
+}
+```
+```
+Title: OpenChecklist
+Author: Nikola Gocic
+Contact: support@contextu.al
+TestApp:  https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: this GuideBlock will display a popup dialog with a text list, each row in the list has text that is read-only with a check box that is read-only. When the user touches a row it will execute some programatic action unique to each row.
+Acknowledgements:
+Screenshot:
+Video:
+Extensibility: {
+  "guideBlockKey": "OpenChecklist",
+  "tasks": [
+    {
+      "name": "Set My Tag",
+      "action": "setTag",
+      "action_data": {
+        "key": "mytag",
+        "value": "1234"
+      }
+    },
+    {
+      "name": "Visit Inbox",
+      "action": "gotoScreen",
+      "action_data": {
+        "deep_link": "airbnbContextual://tab/inbox"
+      }
+    },
+    {
+      "name": "Visit Profile",
+      "action": "gotoScreen",
+      "action_data": {
+        "deep_link": "airbnbContextual://tab/profile"
+      }
+    }
+  ]
+}
+```
+
+```
+Title: Carousel
+Author: Karthick
+Contact: https://github.com/KarthickCk
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: carousel
+Description: Launch carousel screen, where following extensibility is mandatory and where the skip is optional
+Acknowledgements:
+Screenshot: https://drive.google.com/file/d/13DCAIa6uClA1Wl10MNOh2PgJqoW6JbdI/view?usp=sharing
+Video:
+Extensibility: {
+  {
+    "guideBlockKey": "OnBoarding",
+    "skip": {
+      "text": "Skip",
+      "color": "#d3d3d3",
+      "size": 12
+    }
+  }
+Registration: |
+val carousel = "Carousel"
+Contextual.registerGuideBlock(carousel).observe(this) { contextualContainer ->
+    if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(carousel)) {
+        setContent {
+            MaterialTheme {
+                CarouselComponent(contextualContainer = contextualContainer) {
+                    when (it) {
+                        is CarouselAction.OnSkip -> {
+  
+                        }
+  
+                        is CarouselAction.OnButtonClick -> {
+  
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+```
+Title: MyChecklist
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "OpenChecklist",
+  "tasks": [
+    {
+      "name": "Set My Tag",
+      "action": "SetTag",
+      "action_data": {
+        "key": "mytag",
+        "value": "1234"
+      }
+    },
+    {
+      "name": "Visit Inbox",
+      "action": "gotoScreen",
+      "action_data": {
+        "deeplink": "airbnb_contextual://screen/inbox"
+      }
+    },
+    {
+      "name": "Visit Profile",
+      "action": "gotoScreen",
+      "action_data": {
+        "deeplink": "airbnb_contextual://screen/profile"
+      }
+    }
+  ]
+
+}
+```
+
+```
+Title: CircleVideo
+Author: Jenisha Makadiya
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: circlevideo
+Description: Launch Circle Video to show any video in Circle to targeted users at any time with this low-code GuideBlock
+Acknowledgements:
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  "guideBlockKey": "CircleVideo"
+}
+```
+
+```
+Title: Confetti
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: confetti
+Description: Launch confetti to targeted users at any time with this low-code GuideBlock
+Acknowledgements: https://github.com/DanielMartinus/Konfetti
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  "guideBlockKey": "confetti"
+}
+```
+
+```
+Title: Fancy Announcement
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "FancyAnnouncement"
+}
+```
+
+```
+Title: NPSRatingBar
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "NPSRatingBar",
+}
+```
+
+```
+Title: BarCodeScanner
+Author: Karthick
+Contact: https://github.com/KarthickCk
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: scanner-GB
+Description: Launch scanner screen and scans the qr and barcode, where following extensibility is mandatory, width and height should be in %
+Acknowledgements: Google's scanner ML kit repo https://github.com/googlesamples/mlkit/tree/master/android/material-showcase
+Screenshot: https://drive.google.com/file/d/1Iu4KNUJWnTK8CbzRJsmksyul86jmorAo/view?usp=sharing
+Video:
+Extensibility: {
+  {
+    "guideBlockKey": "QRScanner",
+    "properties": {
+      "width": 70,
+      "height": 80,
+      "show_qr_result": true
+    },
+    "iconProperties": {
+      "color": 123
+    },
+    "tag": "last_qr_scan"
+  }
+}
+Registration: |
+val barCodeScanner = "BarCodeScanner"
+Contextual.registerGuideBlock(barCodeScanner).observe(this) { contextualContainer ->
+    if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(barCodeScanner)) {
+        BarcodeScannerGuideBlock(
+            (this)
+        ) { barcodeResult ->
+  
+        }.also {
+            it.showGuideBlock(contextualContainer)
+        }
+    }
+}
+```
+```
+Title: OpenChecklist
+Author: Nikola Gocic
+Contact: support@contextu.al
+TestApp:  https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: this GuideBlock will display a popup dialog with a text list, each row in the list has text that is read-only with a check box that is read-only. When the user touches a row it will execute some programatic action unique to each row.
+Acknowledgements:
+Screenshot:
+Video:
+Extensibility: {
+  "guideBlockKey": "OpenChecklist",
+  "tasks": [
+    {
+      "name": "Set My Tag",
+      "action": "setTag",
+      "action_data": {
+        "key": "mytag",
+        "value": "1234"
+      }
+    },
+    {
+      "name": "Visit Inbox",
+      "action": "gotoScreen",
+      "action_data": {
+        "deep_link": "airbnbContextual://tab/inbox"
+      }
+    },
+    {
+      "name": "Visit Profile",
+      "action": "gotoScreen",
+      "action_data": {
+        "deep_link": "airbnbContextual://tab/profile"
+      }
+    }
+  ]
+}
+```
+
+```
+Title: Carousel
+Author: Karthick
+Contact: https://github.com/KarthickCk
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: carousel
+Description: Launch carousel screen, where following extensibility is mandatory and where the skip is optional
+Acknowledgements:
+Screenshot: https://drive.google.com/file/d/13DCAIa6uClA1Wl10MNOh2PgJqoW6JbdI/view?usp=sharing
+Video:
+Extensibility: {
+  {
+    "guideBlockKey": "OnBoarding",
+    "skip": {
+      "text": "Skip",
+      "color": "#d3d3d3",
+      "size": 12
+    }
+  }
+Registration: |
+val carousel = "Carousel"
+Contextual.registerGuideBlock(carousel).observe(this) { contextualContainer ->
+    if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(carousel)) {
+        setContent {
+            MaterialTheme {
+                CarouselComponent(contextualContainer = contextualContainer) {
+                    when (it) {
+                        is CarouselAction.OnSkip -> {
+  
+                        }
+  
+                        is CarouselAction.OnButtonClick -> {
+  
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+```
+Title: MyChecklist
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "OpenChecklist",
+  "tasks": [
+    {
+      "name": "Set My Tag",
+      "action": "SetTag",
+      "action_data": {
+        "key": "mytag",
+        "value": "1234"
+      }
+    },
+    {
+      "name": "Visit Inbox",
+      "action": "gotoScreen",
+      "action_data": {
+        "deeplink": "airbnb_contextual://screen/inbox"
+      }
+    },
+    {
+      "name": "Visit Profile",
+      "action": "gotoScreen",
+      "action_data": {
+        "deeplink": "airbnb_contextual://screen/profile"
+      }
+    }
+  ]
+
+}
+```
+
+```
+Title: CircleVideo
+Author: Jenisha Makadiya
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: circlevideo
+Description: Launch Circle Video to show any video in Circle to targeted users at any time with this low-code GuideBlock
+Acknowledgements:
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  "guideBlockKey": "CircleVideo"
+}
+```
+
+```
+Title: Confetti
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: confetti
+Description: Launch confetti to targeted users at any time with this low-code GuideBlock
+Acknowledgements: https://github.com/DanielMartinus/Konfetti
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  "guideBlockKey": "confetti"
+}
+```
+
+```
+Title: Fancy Announcement
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "FancyAnnouncement"
+}
+```
+
+```
+Title: NPSRatingBar
+Author: Daniel Quah
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A modal popup that you want to style your way.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "NPSRatingBar",
+}
+```
+
