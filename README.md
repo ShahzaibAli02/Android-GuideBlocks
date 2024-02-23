@@ -78,20 +78,3 @@ You can contribute to https://guideblocks.org by wrapping a code element that wo
 10. Sit back, relax, have a bubble tea and wait for approval!
 
 
-### Sample GuideBlock.yaml
-
-```
-Title: Confetti
-Author: Daniel Quah
-Email: support@contextu.al
-TestApp: https://github.com/contextu-al/FavDish
-TestAppBranch: confetti
-Description: Launch confetti to targeted users at any time with this low-code GuideBlock
-Acknowledgements: https://github.com/DanielMartinus/Konfetti
-Screenshot: 
-Video: https://vimeo.com/manage/videos/909526616/8efaae6607
-Extensibility: {
-  "guideBlockKey": "Confetti"
-}
-```
- 
