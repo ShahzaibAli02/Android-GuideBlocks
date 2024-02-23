@@ -23,18 +23,16 @@ Extensibility: {
   }
 }
 Registration: |
-  fun launchBarcode() {
-      val barCodeScanner = "BarCodeScanner"
-      Contextual.registerGuideBlock(barCodeScanner).observe(this) { contextualContainer ->
-          if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(barCodeScanner)) {
-              BarcodeScannerGuideBlock(
-                  (this)
-              ) { barcodeResult ->
+val barCodeScanner = "BarCodeScanner"
+Contextual.registerGuideBlock(barCodeScanner).observe(this) { contextualContainer ->
+    if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(barCodeScanner)) {
+        BarcodeScannerGuideBlock(
+            (this)
+        ) { barcodeResult ->
   
-              }.also {
-                  it.showGuideBlock(contextualContainer)
-              }
-          }
-      }
-  }
+        }.also {
+            it.showGuideBlock(contextualContainer)
+        }
+    }
+}
 ```
