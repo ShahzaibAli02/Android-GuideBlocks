@@ -2,6 +2,10 @@
 
 Everyone loves Scanner! This is a simple example to get you started with Contextual Extensibility without needing to hard-code your changes every time you want to celebrate with the user.
 
+Barcode GB launches the barcode scanning screen and send the result back to the caller, 
+additionally we can customize the option whether to show/hide the scanning result bottom sheet in the barcode code screen by using
+Extensibility property "[show_qr_result]"
+
 1. Create an account at [Contextual Dashboard](https://dashboard.contextu.al/ "Contextual Dashboard").
 2. Install the Contextual SDK following the instructions for IOS or Android.
 3. Copy-Paste the instantiation of the Guide Component AFTER the Contextual SDK registration.

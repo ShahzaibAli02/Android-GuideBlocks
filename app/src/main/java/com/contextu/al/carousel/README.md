@@ -2,6 +2,10 @@
 
 Everyone loves carousel! This is a simple example to get you started with Contextual Extensibility without needing to hard-code your changes every time you want to celebrate with the user.
 
+Create the simple carousel GB component, where we can include it any place 
+and it can be full screen or not it depends on the parent's width and height
+we can show/hide skip ui option with Extensibility property "[skip]" 
+
 1. Create an account at [Contextual Dashboard](https://dashboard.contextu.al/ "Contextual Dashboard").
 2. Install the Contextual SDK following the instructions for IOS or Android.
 3. Copy-Paste the instantiation of the Guide Component AFTER the Contextual SDK registration.
