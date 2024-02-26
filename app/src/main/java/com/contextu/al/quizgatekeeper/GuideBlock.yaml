@@ -1,0 +1,67 @@
+```
+Title: QuizGateKeeper
+Author: Daniel Quah
+Email: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A quiz popup which shows user questions.
+Screenshot: 
+Video: 
+Extensibility: {
+  "guideBlockKey": "QuizGateKeeper",
+  "Questions": [
+    {
+      "question": "How would you do X?",
+      "answers": [
+        {
+          "row": {
+            "label": "By clicking the edit profile",
+            "correct": false
+          }
+        },
+        {
+          "row": {
+            "label": "By praying to my fave deity",
+            "correct": false
+          }
+        },
+        {
+          "row": {
+            "label": "By entering the dish and selecting Fave",
+            "correct": true
+          }
+        }
+      ]
+    },
+    {
+      "question": "What planet are you on?",
+      "answers": [
+        {
+          "row": {
+            "label": "Earth",
+            "correct": true
+          }
+        },
+        {
+          "row": {
+            "label": "Betelgeuse Seven",
+            "correct": false
+          }
+        },
+        {
+          "row": {
+            "label": "Golgafrincham",
+            "correct": false
+          }
+        }
+      ]
+    }
+  ],
+  "fail": { "quiz_action" : "Restart_Quiz", "allow_screen_access" : false, "retries": 3, "lockout_seconds": 600
+  },
+  "pass": {
+    "quiz_action": {"setTag": {"key" : "Quiz_pass_datetime", "value": "@now"}, "allow_screen_access" : true}
+  }
+}
+```
+

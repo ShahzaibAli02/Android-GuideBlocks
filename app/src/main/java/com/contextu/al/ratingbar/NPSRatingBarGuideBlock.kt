@@ -94,7 +94,7 @@ class NPSRatingBarGuideBlock : ComponentActivity()
 
                             isShowing=false
                             onSubmit(mProgress)
-//                            contextualContainer.guidePayload.complete.onClick(null)
+                            contextualContainer.guidePayload.complete.onClick(null)
                             contextualContainer.guidePayload.nextStep.onClick(null)
                         }) {
                             Text(text =  mGuide.buttons.nextButton?.text?:"Submit", fontSize = MaterialTheme.typography.titleMedium.fontSize)

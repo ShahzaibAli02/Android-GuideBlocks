@@ -4,11 +4,12 @@ Author: Daniel Quah
 Email: support@contextu.al
 TestApp: https://github.com/contextu-al/FavDish
 TestAppBranch: main
-Description: A modal popup that you want to style your way.
+Description: A modal popup that shows rating bar.
 Screenshot: 
 Video: 
 Extensibility: {
   "guideBlockKey": "NPSRatingBar",
+  "max": "5", //Optional shows what max number in progress
 }
 ```
 
