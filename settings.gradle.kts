@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Android-GuideBlocks"
 include(":app")
- 
+include(":playground")

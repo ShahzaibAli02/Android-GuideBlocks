@@ -1,0 +1,21 @@
+```
+Title: Carousel
+Author: Karthick
+Email: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: carousel
+Description: Launch carousel screen, where following extensibility is mandatory
+Acknowledgements:
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  {
+    "guideBlockKey": "OnBoarding",
+    "skip": {
+      "text": "Skip",
+      "color": "#d3d3d3",
+      "size": 12
+    }
+  }
+```
+

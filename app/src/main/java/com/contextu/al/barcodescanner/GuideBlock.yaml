@@ -1,0 +1,26 @@
+```
+Title: QrScanner
+Author: Karthick
+Email: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: scanner-GB
+Description: Launch scanner screen, where following extensibility is mandatory, wight and height should ge in screen (%)
+Acknowledgements:
+Screenshot: 
+Video: https://vimeo.com/manage/videos/909526616/8efaae6607
+Extensibility: {
+  {
+    "guideBlockKey": "QRScanner",
+    "properties": {
+      "width": 70,
+      "height": 80,
+      "show_qr_result": true
+    },
+    "iconProperties": {
+      "color": 123
+    },
+    "tag": "last_qr_scan"
+  }
+}
+```
+
