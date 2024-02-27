@@ -107,7 +107,7 @@ class MyCheckListGuideBlocks
 
                             if(taskList.all { it.getChecked(contextualContainer!!) })
                             {
-//                                contextualContainer?.guidePayload?.complete?.onClick(null)
+                                contextualContainer?.guidePayload?.complete?.onClick(null)
                                 contextualContainer?.guidePayload?.nextStep?.onClick(null)
                             }
                             else   contextualContainer?.guidePayload?.dismissGuide?.onClick(null)
