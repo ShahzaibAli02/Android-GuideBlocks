@@ -11,11 +11,4 @@ data class QuizGK(
     @SerializedName("Questions")
     var questions: List<Question?>? = null,
 
-
-    var triesLeft:Int=0,
-    var timeLeft:Int=0,
-    var currentIndex:Int = 0,
-    var isError:Boolean=false,
-    var isLocked:Boolean=false,
-    var errorMessage:String="",
 )

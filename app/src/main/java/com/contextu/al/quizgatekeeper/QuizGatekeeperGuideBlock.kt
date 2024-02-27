@@ -1,6 +1,5 @@
 package com.contextu.al.quizgatekeeper
 
-import android.app.Activity
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -10,14 +9,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
@@ -28,10 +25,11 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,25 +41,21 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.ViewModel
 import com.contextu.al.R
 import com.contextu.al.model.customguide.ContextualContainer
+import com.contextu.al.quizgatekeeper.enums.QuizStatus
 import com.contextu.al.quizgatekeeper.model.Answer
 import com.contextu.al.quizgatekeeper.model.Question
 import com.contextu.al.quizgatekeeper.model.QuizGK
 import com.contextu.al.quizgatekeeper.viewModel.QuizGateKeeperViewModel
 import com.google.gson.Gson
-import kotlinx.coroutines.runBlocking
-import java.nio.file.WatchEvent
 
 class QuizGatekeeperGuideBlock
 {
@@ -74,41 +68,116 @@ class QuizGatekeeperGuideBlock
     @Composable
     fun show(activity: AppCompatActivity, contextualContainer: ContextualContainer?)
     {
+
         val mViewModel: QuizGateKeeperViewModel by activity.viewModels()
         val mQuizGK = mViewModel.quizGK.collectAsState().value
+        val mQuizState = mViewModel.quizState.collectAsState().value
+        var currentQuestionIndex by remember { mutableIntStateOf(0) }
+
+        var parsingError by remember { mutableStateOf("") }
         primaryColor = MaterialTheme.colorScheme.primary
         typography = MaterialTheme.typography;
-        var isLocked by remember { mutableStateOf(false) }
-        SideEffect {
-            val parseResult = parseJson(contextualContainer?.guidePayload?.guide?.extraJson)
-            mViewModel.updateQuiz(parseResult)
+
+        var userPoints: Int by remember { mutableStateOf(0) }
+        LaunchedEffect(key1=contextualContainer?.guidePayload?.guide?.extraJson) {
+            userPoints=0
+            currentQuestionIndex=0
+            when (val result = parseJson(contextualContainer?.guidePayload?.guide?.extraJson))
+            {
+                is DataState.Error ->
+                {
+                    parsingError = result.errorMsg
+                    mViewModel.updateState(){
+                        it.apply { quizStatus=QuizStatus.ERROR }
+                    }
+                }
+
+                is DataState.Success ->
+                {
+                    mViewModel.updateQuiz(result.data)
+//                    mViewModel.startTimer()
+
+                }
+            }
+
         }
         Dialog(onDismissRequest = { /*TODO*/ }) {
             Card(modifier = Modifier.fillMaxWidth()) {
 
-                if (mQuizGK == null)
+
+                Log.d("TAG", "Update CARD: ${mQuizState.quizStatus}")
+                if (mQuizState.quizStatus == QuizStatus.NONE)
                 {
                     LoadingScreen()
                     return@Card
                 }
-
-                if (mQuizGK.isLocked)
+                if (mQuizState.quizStatus == QuizStatus.LOCKED)
                 {
                     LockedOut()
                     return@Card
                 }
-                if (mQuizGK.isError)
+                if (mQuizState.quizStatus == QuizStatus.ERROR)
                 {
-                    ErrorScreen(detailMsg = mQuizGK.errorMessage)
+                    ErrorScreen(detailMsg = parsingError)
                     return@Card
                 }
-                Quiz(mQuizGK.questions?.getOrNull(mQuizGK.currentIndex))
+                if (mQuizState.quizStatus == QuizStatus.RESULT)
+                {
+                    ResultScreen(userPoints, mViewModel.quizQuestionsSize){
+
+                    }
+                    return@Card
+                }
+                if (mQuizState.quizStatus == QuizStatus.STARTED)
+                {
+                    val currentQuestion = mQuizGK?.questions?.getOrNull(currentQuestionIndex)
+                    QuizHeader(modifier = Modifier.padding(10.dp),mQuizState.retriesLeft,mQuizState.time)
+                    Text(modifier = Modifier.align(Alignment.End).padding(end=10.dp, top = 5.dp),text = "Question ${currentQuestionIndex+1} of ${mViewModel.quizQuestionsSize}", style = typography.titleSmall)
+
+                    Quiz(modifier = Modifier.padding(10.dp),currentQuestion) { selectedAnswer ->
+
+                        if (selectedAnswer?.row?.correct == true) userPoints += 1;
+
+                        if (currentQuestionIndex < mViewModel.quizQuestionsSize-1)
+                        {
+                            currentQuestionIndex++;
+                        }
+                        else
+                        {
+                            mViewModel.updateState(){
+                                it.apply { quizStatus=QuizStatus.RESULT }
+                            }
+                        }
+                    }
+                }
+
 
             }
         }
 
     }
 
+
+    fun Long.toMinutesAndSeconds(): Pair<Long, Long> {
+        val seconds = this / 1000
+        val minutes = seconds / 60
+        val remainingSeconds = seconds % 60
+        return Pair(minutes, remainingSeconds)
+    }
+    @Composable
+    fun QuizHeader(modifier:Modifier = Modifier,retriesLeft:Int,time:Long)
+    {
+
+        val timeRem=time.toMinutesAndSeconds();
+        Row(modifier = modifier){
+            Text(text = "Retries left : ${retriesLeft}",  style = typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+            Spacer(modifier = Modifier.weight(1f))
+            Text(text = "${timeRem.first}:${timeRem.second} min", style = typography.titleMedium)
+        }
+
+        HorizontalDivider(modifier = Modifier, thickness = 2.dp, color = primaryColor!!)
+
+    }
 
     @Composable
     fun LockedOut()
@@ -168,68 +237,74 @@ class QuizGatekeeperGuideBlock
     }
 
     @Composable
-    fun FailScreen()
+    fun ResultScreen(userPoints: Int, totalPoints: Int,onRestart:()->Unit)
     {
+
         Column(
             modifier = Modifier
                 .padding(10.dp)
                 .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(text = "Failed !", style = typography.headlineSmall.copy(color = Color.Red, fontWeight = FontWeight.Bold))
+            Text(text = "Result !", modifier = Modifier.align(Alignment.Start), style = typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
             Spacer(modifier = Modifier.height(5.dp))
-            Text(text = "Your scored 0/10 !", style = typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+            Text(text = "Your scored ${userPoints}/${totalPoints} !", style = typography.titleMedium.copy(fontWeight = FontWeight.Bold))
             Spacer(modifier = Modifier.height(10.dp))
-            ElevatedButton(enabled = false, modifier = Modifier.width(200.dp), shape = RoundedCornerShape(10.dp), onClick = { /*TODO*/ }) {
+            ElevatedButton(enabled = true, modifier = Modifier.width(200.dp), shape = RoundedCornerShape(10.dp), onClick = {
+                onRestart()
+
+            }) {
                 Text("Restart Quiz", style = typography.titleMedium)
             }
         }
     }
 
     @Composable
-    fun Quiz(question: Question?)
+    fun Quiz(modifier:Modifier = Modifier,question: Question?, onAnswerDone: (answer: Answer?) -> Unit)
     {
 
+        var answer: Answer? by remember { mutableStateOf(null) }
+        LaunchedEffect(key1 = question) {
+            answer = null
+        }
         Column(
-            modifier = Modifier
-                .padding(10.dp)
+            modifier = modifier
                 .fillMaxWidth()
         ) {
-            Row {
-                Text(text = "Retries left : 3", style = typography.titleSmall)
-                Spacer(modifier = Modifier.weight(1f))
-                Text(text = "3:00 min", style = typography.titleSmall)
-            }
+            Text(
+                text = question?.question
+                    ?: "", style = typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+            )
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp), thickness = 2.dp, color = primaryColor!!)
-            Text(text = question?.question?:"", style = typography.titleLarge.copy(fontWeight = FontWeight.Bold))
-
-            question?.answers?.forEach {answer->
-                QuizOptionRow(answer){
-
+            question?.answers?.forEach { ans ->
+                val isSelected = answer == ans
+                QuizOptionRow(ans, isSelected) { selectedAns ->
+                    answer = selectedAns
                 }
             }
 
-//            Spacer(modifier = Modifier.height(10.dp))
-//            QuizOptionRow()
-//            Spacer(modifier = Modifier.height(10.dp))
-//            QuizOptionRow()
-//            Spacer(modifier = Modifier.height(10.dp))
-//            QuizOptionRow()
+            //            Spacer(modifier = Modifier.height(10.dp))
+            //            QuizOptionRow()
+            //            Spacer(modifier = Modifier.height(10.dp))
+            //            QuizOptionRow()
+            //            Spacer(modifier = Modifier.height(10.dp))
+            //            QuizOptionRow()
 
 
             Spacer(modifier = Modifier.height(20.dp))
-
-            ElevatedButton(enabled = false, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(10.dp), onClick = { /*TODO*/ }) {
+            ElevatedButton(enabled = answer != null, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(10.dp), onClick = {
+                onAnswerDone(answer)
+            }) {
                 Text("Next", style = typography.titleMedium)
             }
         }
     }
 
     @Composable
-    fun QuizOptionRow(answer: Answer?,onClick:()->Unit)
+    fun QuizOptionRow(answer: Answer?, isSelected: Boolean, onClick: (selectedAns: Answer?) -> Unit)
     {
 
+        Spacer(modifier = Modifier.height(15.dp))
         Row(modifier = Modifier
             .wrapContentHeight()
             .fillMaxWidth()
@@ -239,11 +314,13 @@ class QuizGatekeeperGuideBlock
                 )
             }
             .padding(horizontal = 10.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(text =answer?.row?.label?:"", style = typography.titleSmall, modifier = Modifier.weight(1f))
+            Text(
+                text = answer?.row?.label
+                    ?: "", style = typography.titleSmall, modifier = Modifier.weight(1f)
+            )
             Spacer(modifier = Modifier.width(10.dp))
-            RadioButton(modifier = Modifier.size(10.dp), selected = answer?.isSelected!!.value, onClick = {
-                answer?.isSelected?.value=true
-                onClick()
+            RadioButton(modifier = Modifier.size(10.dp), selected = isSelected, onClick = { //                answer?.isSelected?.value = true
+                onClick(answer)
             })
         }
 
@@ -255,8 +332,7 @@ class QuizGatekeeperGuideBlock
     {
 
 
-        typography = MaterialTheme.typography;
-//        Quiz() //        ErrorScreen(detailMsg = "Failed to parse extra_json ! ")
+        typography = MaterialTheme.typography; //        Quiz() //        ErrorScreen(detailMsg = "Failed to parse extra_json ! ")
         //        show(activity=AppCompatActivity(),contextualContainer = null)
     }
 
@@ -273,24 +349,22 @@ class QuizGatekeeperGuideBlock
     fun showFailPreview()
     {
         typography = MaterialTheme.typography;
-        FailScreen()
+        ResultScreen(0, 0){
+
+        }
     }
 
-    private fun parseJson(json: String?):QuizGK
+    private fun parseJson(json: String?): DataState<QuizGK>
     {
         if (mQuizGK == null && json != null)
         {
             runCatching {
                 mQuizGK = Gson().fromJson(json, QuizGK::class.java)
             }.onFailure {
-                Log.e("QuizGatekeeperGuideBlock", "Failed to parse extra_json ERROR : ${it.localizedMessage}")
-                return QuizGK().apply {
-                    isError=true
-                    errorMessage=it.localizedMessage?:""
-                }
+                return DataState.Error(errorMsg = it.localizedMessage ?: "Failed to parse json")
             }
         }
-        return mQuizGK!!
+        return DataState.Success(mQuizGK!!)
     }
 
 }
