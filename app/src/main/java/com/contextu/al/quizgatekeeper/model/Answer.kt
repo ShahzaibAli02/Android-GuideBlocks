@@ -7,8 +7,11 @@ import androidx.compose.runtime.remember
 import com.google.gson.annotations.SerializedName
 
 data class Answer(
-    @SerializedName("row") var row: Row? = null,
+    @SerializedName("correct")
+    var correct: Boolean? = null,
+    @SerializedName("label")
+    var label: String? = null
 )
 {
-    var isSelected: MutableState<Boolean> =  mutableStateOf(false)
+
 }

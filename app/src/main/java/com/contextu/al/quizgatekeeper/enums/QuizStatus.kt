@@ -5,7 +5,8 @@ enum class QuizStatus{
    NONE,
     STARTED,
     RESULT,
-    LOCKED,
+    FAIL,
+    PASS,
     ERROR,
     TIMEUP
 
