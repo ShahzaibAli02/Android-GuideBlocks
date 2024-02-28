@@ -22,10 +22,18 @@ class QuizGateKeeperViewModel:ViewModel()
 
     val quizState:StateFlow<QuizState> = _quizState
     val quizGK: StateFlow<QuizGK?> = _quizGk
+
     var quizQuestionsSize=0
         get()
         {
             field=_quizGk.value?.questions?.size?:0
+            return field
+        }
+
+    var quizAttemptsLimit=0
+        get()
+        {
+            field=_quizGk.value?.fail?.attempts?:0
             return field
         }
 
@@ -35,7 +43,7 @@ class QuizGateKeeperViewModel:ViewModel()
         _quizGk.value=quizGK
         updateState{
             it.apply {
-                retriesLeft=quizGK.fail?.retries?:0
+                retriesLeft=quizGK.fail?.attempts?:0
                 time=quizGK.fail?.lockoutSeconds?.toLong()?:0L
                 quizStatus=QuizStatus.STARTED
             }
@@ -43,9 +51,10 @@ class QuizGateKeeperViewModel:ViewModel()
     }
     fun updateState(quizState: (QuizState)->QuizState)
     {
-        quizState(_quizState.value).apply {
-            Log.d("TAG", "updateState: ${this?.quizStatus}")
-            _quizState.value=this.copy()
+        Log.d("TAG", "updateState BEFOR: ${_quizState.value}")
+        quizState(_quizState.value.copy()).let {newQuizState->
+            Log.d("TAG", "updateState: ${newQuizState}")
+            _quizState.value=newQuizState
         }
     }
 

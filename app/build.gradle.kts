@@ -113,4 +113,5 @@ dependencies {
     //scanner
     implementation("com.google.mlkit:barcode-scanning:17.0.3")
     implementation("com.trafi:rating-seek-bar:0.4-alpha")
+    implementation("com.airbnb.android:lottie:4.2.0")
 }
