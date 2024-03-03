@@ -1,7 +1,5 @@
 package com.contextu.al.quizgatekeeper
 
-import android.os.Build
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
@@ -20,7 +18,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
-
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -56,6 +53,9 @@ import com.airbnb.lottie.LottieDrawable
 import com.contextu.al.R
 import com.contextu.al.extensions.clicked
 import com.contextu.al.extensions.complete
+import com.contextu.al.extensions.getIntegerTag
+import com.contextu.al.extensions.getStringTag
+import com.contextu.al.extensions.setTag
 import com.contextu.al.model.customguide.ContextualContainer
 import com.contextu.al.quizgatekeeper.enums.QuizStatus
 import com.contextu.al.quizgatekeeper.model.Answer
@@ -64,36 +64,39 @@ import com.contextu.al.quizgatekeeper.model.QuizGK
 import com.contextu.al.quizgatekeeper.viewModel.QuizGateKeeperViewModel
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.firstOrNull
-import okhttp3.internal.notify
-import java.time.OffsetDateTime
 import java.util.Date
 
 class QuizGatekeeperGuideBlock
 {
 
 
+
+
     private var mQuizGK: QuizGK? = null
     private lateinit var typography: Typography
     private var primaryColor: Color? = null
-    private val TAG="QuizGatekeeperGuideBlock"
     private val TAG_QUIZ_LOCKED="is_quiz_user_locked"
-
+    private val TAG_QUIZ_LOCKED_REMAINING_TIME="quiz_user_locked_remaining_time"
     private val TAG_QUIZ_COMPLETED="is_quiz_user_completed"
-    //    val testJson="{\n" + "  \"guideBlockKey\": \"QuizGateKeeper\",\n" + "  \"Questions\": [\n" + "    {\n" + "      \"question\": \"How would you do X?\",\n" + "      \"answers\": [\n" + "        {\n" + "          \"label\": \"By clicking the edit profile\",\n" + "          \"correct\": false\n" + "        },\n" + "        {\n" + "          \"label\": \"By praying to my fave deity\",\n" + "          \"correct\": false\n" + "        },\n" + "        {\n" + "          \"label\": \"By entering the dish and selecting Fave\",\n" + "          \"correct\": true\n" + "        }\n" + "      ]\n" + "    },\n" + "    {\n" + "      \"question\": \"What planet are you on?\",\n" + "      \"answers\": [\n" + "        {\n" + "          \"label\": \"Earth\",\n" + "          \"correct\": true\n" + "        },\n" + "        {\n" + "          \"label\": \"Betelgeuse Seven\",\n" + "          \"correct\": false\n" + "        },\n" + "        {\n" + "          \"label\": \"Golgafrincham\",\n" + "          \"correct\": false\n" + "        }\n" + "      ]\n" + "    }\n" + "  ],\n" + "  \"fail\": {\n" + "    \"quiz_action\": \"Restart_Quiz\",\n" + "    \"allow_screen_access\": false,\n" + "    \"attempts\": 2,\n" + "    \"lockout_seconds\": 15,\n" + "    \"setTag\": {\n" + "      \"key\": \"Quiz_fail_datetime\",\n" + "      \"value\": \"@now\"\n" + "    }\n" + "  },\n" + "  \"pass\": {\n" + "    \"quiz_action\": {\n" + "      \"setTag\": {\n" + "        \"key\": \"Quiz_pass_datetime\",\n" + "        \"value\": \"@now\"\n" + "      },\n" + "      \"allow_screen_access\": true\n" + "    }\n" + "  }\n" + "}";
+    private lateinit var activity:AppCompatActivity
+    private var mContextualContainer:ContextualContainer? = null
     @Composable
     fun show(activity: AppCompatActivity, mContextualContainer: ContextualContainer?,onDone:(result:Boolean)->Unit)
     {
 
-        val mViewModel: QuizGateKeeperViewModel by activity.viewModels()
+
+        this.mContextualContainer=mContextualContainer
+        this.activity=activity
+        val mViewModel:QuizGateKeeperViewModel by activity.viewModels()
         val mQuizGK by  mViewModel.quizGK.collectAsState()
         val mQuizState by  mViewModel.quizState.collectAsState()
         var currentQuestionIndex by remember { mutableIntStateOf(0) }
+        var userPoints: Int by remember { mutableStateOf(0) }
+
         var isDialogShowing by remember { mutableStateOf(true) }
         var parsingError by remember { mutableStateOf("") }
         primaryColor = MaterialTheme.colorScheme.primary
         typography = MaterialTheme.typography;
-        var userPoints: Int by remember { mutableStateOf(0) }
 
         LaunchedEffect(key1=mContextualContainer?.guidePayload?.guide?.extraJson) {
             userPoints=0
@@ -112,23 +115,28 @@ class QuizGatekeeperGuideBlock
                 is DataState.Success ->
                 {
 
-                    if(mContextualContainer?.tagManager?.getTag("extraJson")?.firstOrNull()?.tagStringValue==mContextualContainer?.guidePayload?.guide?.extraJson || mContextualContainer?.tagManager?.getTag(TAG_QUIZ_COMPLETED)?.firstOrNull()?.tagIntegerValue==1)
+
+
+                    if(mContextualContainer?.getStringTag("extraJson","")==mContextualContainer?.guidePayload?.guide?.extraJson && mContextualContainer?.getIntegerTag(TAG_QUIZ_COMPLETED)==1)
                     {
                         isDialogShowing=false
                         return@LaunchedEffect
                     }
-                    if(mContextualContainer?.tagManager?.getTag(TAG_QUIZ_LOCKED)?.firstOrNull()?.tagIntegerValue==1)
+                    if(mContextualContainer?.getIntegerTag(TAG_QUIZ_LOCKED)==1)
                     {
 
+                        mContextualContainer.getIntegerTag(TAG_QUIZ_LOCKED_REMAINING_TIME,-1).let {
+                            if(it!=-1)
+                                result.data.fail?.actionData?.lockoutSeconds=it
+                        }
                         mViewModel.updateQuiz(result.data,QuizStatus.FAIL)
                         return@LaunchedEffect
                     }
 
+                    isDialogShowing=true
                     mViewModel.updateQuiz(result.data,QuizStatus.STARTED)
                     mContextualContainer?.clicked()
-                    mContextualContainer?.tagManager?.setStringTag("extraJson", mContextualContainer.guidePayload?.guide?.extraJson.toString())
 
-                    //                    mViewModel.startTimer()
 
                 }
             }
@@ -150,18 +158,19 @@ class QuizGatekeeperGuideBlock
 
 
                         mQuizGK?.fail?.actionData?.let {
-                            mContextualContainer?.tagManager?.setStringTag("Quiz_fail_datetime", getCurrentTime().toString())
+                            mContextualContainer?.setTag("Quiz_fail_datetime", getCurrentTime().toString())
                             if(it.key.isNullOrBlank().not())
                             {
-                                mContextualContainer?.tagManager?.setStringTag(it.key!!,it.value.toString())
+                                mContextualContainer?.setTag(it.key!!,it.value.toString())
                             }
                         }
 
                         mContextualContainer?.tagManager?.setNumericTag(TAG_QUIZ_LOCKED,1)
                         LockedOut(mQuizGK?.fail?.actionData?.lockoutSeconds?.toLong()?:0L)
                         {
-                            mContextualContainer?.tagManager?.setNumericTag(TAG_QUIZ_LOCKED,0)
-                            mContextualContainer?.tagManager?.setNumericTag(TAG_QUIZ_COMPLETED,1)
+                            mContextualContainer?.setTag(TAG_QUIZ_LOCKED,0)
+                            mContextualContainer?.setTag(TAG_QUIZ_COMPLETED,1)
+                            mContextualContainer?.setTag("extraJson", mContextualContainer.guidePayload.guide?.extraJson.toString())
                             isDialogShowing=false
                         }
                         return@Card
@@ -173,11 +182,13 @@ class QuizGatekeeperGuideBlock
                             //DO ACTION NEED TO BE DONE IN PASS
                             mQuizGK?.pass?.actionData?.let {
 
-                                mContextualContainer?.tagManager?.setStringTag("Quiz_pass_datetime", getCurrentTime().toString())
-                                mContextualContainer?.tagManager?.setNumericTag(TAG_QUIZ_COMPLETED,1)
+                                mContextualContainer?.setTag("Quiz_pass_datetime", getCurrentTime().toString())
+                                mContextualContainer?.setTag("extraJson", mContextualContainer.guidePayload?.guide?.extraJson.toString())
+
+                                mContextualContainer?.setTag(TAG_QUIZ_COMPLETED,1)
                                 if(it.key.isNullOrBlank().not())
                                 {
-                                    mContextualContainer?.tagManager?.setStringTag(it.key!!,it.value.toString())
+                                    mContextualContainer?.setTag(it.key!!,it.value.toString())
                                 }
                             }
                             mContextualContainer?.complete()
@@ -290,7 +301,6 @@ class QuizGatekeeperGuideBlock
     @Composable
     fun LockedOut(lockOutTime:Long,onUnlocked:()->Unit)
     {
-        Log.d("TAG", "LockedOut: ${lockOutTime}")
         var timeToUnlock by remember { mutableStateOf(lockOutTime) }
         if(timeToUnlock<=0L)
         {
@@ -311,6 +321,8 @@ class QuizGatekeeperGuideBlock
             repeat(lockOutTime.toInt()) {
                 delay(1000) // Delay for 1 second
                 timeToUnlock -= 1
+                if(timeToUnlock.toInt()%10==0) //AFTER 10 second save remaining time
+                     mContextualContainer?.setTag(TAG_QUIZ_LOCKED_REMAINING_TIME,timeToUnlock.toInt())
             }
         }
     }
@@ -318,9 +330,9 @@ class QuizGatekeeperGuideBlock
 
     @Composable
     fun ErrorScreen(
-        message: String = "Please Wait",
-        detailMsg: String = "",
         modifier: Modifier = Modifier,
+        message: String = "Please Wait",
+        detailMsg: String = ""
     )
     {
         Column(
@@ -508,7 +520,6 @@ class QuizGatekeeperGuideBlock
     }
     private fun parseJson(json: String?): DataState<QuizGK>
     {
-        Log.d("TAG", "json: ${json}")
         if (mQuizGK == null && json != null)
         {
             runCatching {

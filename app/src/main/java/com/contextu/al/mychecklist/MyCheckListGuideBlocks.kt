@@ -50,6 +50,9 @@ import com.contextu.al.mychecklist.composables.CheckListRow
 import com.contextu.al.mychecklist.composables.LazyDivider
 import com.contextu.al.mychecklist.models.Task
 import com.contextu.al.mychecklist.viewModels.TaskViewModel
+import com.contextu.al.extensions.getIntegerTag
+import com.contextu.al.extensions.getStringTag
+import com.contextu.al.extensions.setTag
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -57,9 +60,9 @@ class MyCheckListGuideBlocks
 {
 
 
+    private val MY_CHECK_LIST_DONE="is_my_check_list_done"
     val LocalContextualContainer = staticCompositionLocalOf<ContextualContainer?> { null }
     var deepLinkListener: ((String) -> Unit)? = null
-
     @Composable
     fun show(
         deepLinkListener: ((String) -> Unit),
@@ -69,19 +72,30 @@ class MyCheckListGuideBlocks
     {
 
         this.deepLinkListener = deepLinkListener
+        var shouldShow by remember { mutableStateOf(true) }
         CompositionLocalProvider(LocalContextualContainer provides contextualContainer) {
             val viewModel: TaskViewModel by activity.viewModels()
             LaunchedEffect(key1 = contextualContainer) {
                 contextualContainer.guidePayload.guide.extraJson?.let {
                     viewModel.parseJson(it)
                 }
+
+                if(contextualContainer.getStringTag("extraJson","") ==contextualContainer.guidePayload.guide.extraJson && contextualContainer.getIntegerTag(MY_CHECK_LIST_DONE)==1)
+                {
+                    shouldShow=false
+                    return@LaunchedEffect
+                }
             }
             val taskListState = viewModel.list.collectAsState()
             val taskList = taskListState.value
 
-            ShowBottomSheet(
-                contextualContainer.guidePayload.guide.titleText.text ?: "N/A", taskList
-            )
+            if(shouldShow)
+            {
+                ShowBottomSheet(
+                    contextualContainer.guidePayload.guide.titleText.text ?: "N/A", taskList
+                )
+            }
+
         }
 
 
@@ -98,9 +112,11 @@ class MyCheckListGuideBlocks
         BottomSheetScaffold(
             scaffoldState = bottomSheetState, sheetContent = {
 
-                Row(modifier = Modifier.align(Alignment.End).clickable {
-                    contextualContainer?.guidePayload?.clickInside?.onClick(null)
-                }) {
+                Row(modifier = Modifier
+                    .align(Alignment.End)
+                    .clickable {
+                        contextualContainer?.guidePayload?.clickInside?.onClick(null)
+                    }) {
                     IconButton(modifier = Modifier.size(20.dp), onClick = {
                         coroutineScope.launch {
                             bottomSheetState.bottomSheetState.hide()
@@ -109,6 +125,8 @@ class MyCheckListGuideBlocks
                             {
                                 contextualContainer?.guidePayload?.complete?.onClick(null)
                                 contextualContainer?.guidePayload?.nextStep?.onClick(null)
+                                contextualContainer?.setTag("extraJson", contextualContainer.guidePayload.guide.extraJson ?:"")
+                                contextualContainer?.setTag(MY_CHECK_LIST_DONE,1)
                             }
                             else   contextualContainer?.guidePayload?.dismissGuide?.onClick(null)
                         }
