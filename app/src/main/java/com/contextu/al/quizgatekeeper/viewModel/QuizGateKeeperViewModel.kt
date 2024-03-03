@@ -2,15 +2,12 @@ package com.contextu.al.quizgatekeeper.viewModel
 
 import android.os.CountDownTimer
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.contextu.al.mychecklist.models.Task
 import com.contextu.al.quizgatekeeper.enums.QuizStatus
 import com.contextu.al.quizgatekeeper.model.QuizGK
 import com.contextu.al.quizgatekeeper.model.QuizState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 
 class QuizGateKeeperViewModel:ViewModel()
 {
@@ -33,19 +30,19 @@ class QuizGateKeeperViewModel:ViewModel()
     var quizAttemptsLimit=0
         get()
         {
-            field=_quizGk.value?.fail?.attempts?:0
+            field=_quizGk.value?.fail?.actionData?.attempts?:0
             return field
         }
 
 
-    fun updateQuiz(quizGK: QuizGK)
+    fun updateQuiz(quizGK: QuizGK,state:QuizStatus)
     {
         _quizGk.value=quizGK
         updateState{
             it.apply {
-                retriesLeft=quizGK.fail?.attempts?:0
-                time=quizGK.fail?.lockoutSeconds?.toLong()?:0L
-                quizStatus=QuizStatus.STARTED
+                retriesLeft=quizGK.fail?.actionData?.attempts?:0
+                time=quizGK.fail?.actionData?.lockoutSeconds?.toLong()?:0L
+                quizStatus=state
             }
         }
     }

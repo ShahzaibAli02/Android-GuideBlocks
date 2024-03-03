@@ -1,7 +1,6 @@
-## Fancy Announcement
+## NPS RATING BAR
 
-In this example, we show how to make a Fancy Announcement, just like the crazy ones your Designer comes up with 🤣. Its a simple example to get you started with Contextual Extensibility without needing to hard-code your changes every time you want to update the tip.
-
+In this example, we show how to make a  Nps Rating Bar
 1. Create an account at [Contextual Dashboard](https://dashboard.contextu.al/ "Contextual Dashboard").
 2. Install the Contextual SDK following the instructions for IOS or Android.
 3. Copy-Paste the instantiation of the Guide Component AFTER the Contextual SDK registration.
@@ -9,7 +8,7 @@ In this example, we show how to make a Fancy Announcement, just like the crazy o
 **In your build.gradle add:**
 
 ```
-implementation 'com.github.GuideBlocks-org:Android-GuideBlocks:0.0.4', {
+implementation 'com.github.GuideBlocks-org:Android-GuideBlocks:LATEST_VERSION', {
         exclude group: 'com.google.android.material'
         exclude group: 'com.github.bumptech.glide'
     }
@@ -18,73 +17,80 @@ implementation 'com.github.GuideBlocks-org:Android-GuideBlocks:0.0.4', {
 **In your activities where you want to use GuideBlocks add (for example):**
 
 ```
-import com.contextu.al.fancyannouncement.FancyAnnouncementGuideBlocks
+import com.contextu.al.ratingbar.NPSRatingBarGuideBlock
 import com.contextu.al.core.CtxEventObserver
 ```
 
-4. for the GuideBlock you wish to use, then Copy-Paste the instantiation of the Guide Component AFTER the Contextual SDK registration.
+4. for the GuideBlock you wish to use, then Copy-Paste the instantiation of the Guide Component AFTER the Contextual SDK registration. [XML BASED ANDROID PROJECT]
 
 ```
-        val myCheckList = "NPSRatingBar"
-        Contextual.registerGuideBlock(myCheckList).observe(this){ contextualContainer ->
-            if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(myCheckList)) {
-            
-            
-            //If showing in xml based activity
-        mBinding.composeView.isVisible=true
-        mBinding.composeView.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                MaterialTheme {
-                    NPSRatingBarGuideBlock().show(
-                        contextualContainer = contextualContainer,
-                        onCancel={
+       val guideName = "NPSRatingBar"
+        Contextual.registerGuideBlock(guideName).observe(this) { contextualContainer ->
+            if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(guideName))
+            {
+                val mComposeView: ComposeView = (mBinding.root.children.find { it.tag == "myComposeView" }?: ComposeView(this)) as ComposeView
+                mComposeView.tag = "myComposeView";
+                mComposeView.apply {
+                    setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+                    setContent {
+                        MaterialTheme {
+                            NPSRatingBarGuideBlock().show(contextualContainer = contextualContainer, onCancel = {
 
-                        },
-                        onSubmit={
+                            }, onSubmit = {
 
+                            })
                         }
-                    )
+                    }
+                } 
+                if (mBinding.root.contains(mComposeView).not())
+                {
+                    mBinding.root.addView(mComposeView)
                 }
             }
         }
-        
-           //If showing in compose activity
-            NPSRatingBarGuideBlock().show(
-                        contextualContainer = contextualContainer,
-                        onCancel={
+```
 
-                        },
-                        onSubmit={
+
+5. for the GuideBlock you wish to use, then Copy-Paste the instantiation of the Guide Component AFTER the Contextual SDK registration. [COMPOSE PROJECT]
+
+```
+               MaterialTheme {
+                            val activity = context as? AppCompatActivity
+                            val lifecycleOwner = LocalLifecycleOwner.current
+                            val guideName = "NPSRatingBar"
+                            var mContextualContainer: ContextualContainer? by remember { mutableStateOf(null)}
+                            SideEffect {
+                                Contextual.registerGuideBlock(guideName).observe(lifecycleOwner) { contextualContainer ->
+                                    mContextualContainer=contextualContainer
+                                }
+                            }
+                            if(mContextualContainer!=null && activity!=null)
+                            {
+                             NPSRatingBarGuideBlock().show(contextualContainer = contextualContainer, onCancel = {
+
+                            }, onSubmit = {
+
+                            })
+                            }
 
                         }
-            }
-        }
 ```
  
-5. Build your App and Run it on a phone or
-6. Go to the Dashboard and create a guide:
-* Use this [video]( https://vimeo.com/863886653#t=0m58s "Another Guide Creation How-to") to see the steps
+6. Build your App and Run it on a phone or
+7. Go to the Dashboard and create a guide:
 * choose “Display the guides on any screen of your app” and
 * pick one of the “Standard” Contextual Announcement Templates.
-* Preview the Announcement on your Phone - it should look similar to the template
-7. Now go to the Extensibility section in the sidebar and paste in the JSON as follows:
+* Preview the Rating Bar on your Phone - it should look similar to the template
+8. Now go to the Extensibility section in the sidebar and paste in the JSON as follows:
    `
-   {
-   "guideBlockKey": "FancyAnnouncement"
+{
+   "guideBlockKey": "NPSRatingBar",
+   "max": "5", //Optional shows what max number in progress
    }
    `
 * Match the name in the JSON to the name of your wrapper in the code
-
 JSON editing
- 
-<img src="https://raw.githubusercontent.com/contextu-al/FavDish/main/screenshots/FancyAnnouncementJSON.png" alt="Adding your Extra JSON" width="200"/>
-
-or use the Tree method of editing
-
-<img src="https://raw.githubusercontent.com/contextu-al/FavDish/main/screenshots/FancyAnnouncementTree.png" alt="Adding your Extra JSON" width="200"/>
-
-8. If you are still in Preview Mode, then you should see the Announcement will magically change to Fancy Announcement
-9. Change the Title and Content and buttons. Play around with it and see the results.
-10. Save the guide and show to your Product Team, once you release this version of the App they can launch Fancy Announcement to whoever they want, whenever they want.
+9. If you are still in Preview Mode, then you should see the Nps Rating Bar
+10. Change the Title and Content and buttons. Play around with it and see the results.
+11. Save the guide and show  to your Product Team, once you release this version of the App they can launch Nps Rating Bar  to whoever they want, whenever they want.
 

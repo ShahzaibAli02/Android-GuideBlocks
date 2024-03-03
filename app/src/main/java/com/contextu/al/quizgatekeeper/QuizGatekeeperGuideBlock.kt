@@ -1,10 +1,9 @@
 package com.contextu.al.quizgatekeeper
 
-import android.os.Build
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,15 +18,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
-
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableLongState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -55,6 +51,11 @@ import androidx.compose.ui.window.Dialog
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import com.contextu.al.R
+import com.contextu.al.extensions.clicked
+import com.contextu.al.extensions.complete
+import com.contextu.al.extensions.getIntegerTag
+import com.contextu.al.extensions.getStringTag
+import com.contextu.al.extensions.setTag
 import com.contextu.al.model.customguide.ContextualContainer
 import com.contextu.al.quizgatekeeper.enums.QuizStatus
 import com.contextu.al.quizgatekeeper.model.Answer
@@ -63,49 +64,80 @@ import com.contextu.al.quizgatekeeper.model.QuizGK
 import com.contextu.al.quizgatekeeper.viewModel.QuizGateKeeperViewModel
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
-import java.time.OffsetDateTime
 import java.util.Date
 
 class QuizGatekeeperGuideBlock
 {
 
 
+
+
     private var mQuizGK: QuizGK? = null
     private lateinit var typography: Typography
     private var primaryColor: Color? = null
-
+    private val TAG_QUIZ_LOCKED="is_quiz_user_locked"
+    private val TAG_QUIZ_LOCKED_REMAINING_TIME="quiz_user_locked_remaining_time"
+    private val TAG_QUIZ_COMPLETED="is_quiz_user_completed"
+    private lateinit var activity:AppCompatActivity
+    private var mContextualContainer:ContextualContainer? = null
     @Composable
-    fun show(activity: AppCompatActivity, mContextualContainer: ContextualContainer?)
+    fun show(activity: AppCompatActivity, mContextualContainer: ContextualContainer?,onDone:(result:Boolean)->Unit)
     {
 
-        val mViewModel: QuizGateKeeperViewModel by activity.viewModels()
+
+        this.mContextualContainer=mContextualContainer
+        this.activity=activity
+        val mViewModel:QuizGateKeeperViewModel by activity.viewModels()
         val mQuizGK by  mViewModel.quizGK.collectAsState()
         val mQuizState by  mViewModel.quizState.collectAsState()
         var currentQuestionIndex by remember { mutableIntStateOf(0) }
-        var isDialogShowing by remember { mutableStateOf(true) }
+        var userPoints: Int by remember { mutableStateOf(0) }
 
+        var isDialogShowing by remember { mutableStateOf(true) }
         var parsingError by remember { mutableStateOf("") }
         primaryColor = MaterialTheme.colorScheme.primary
         typography = MaterialTheme.typography;
 
-        var userPoints: Int by remember { mutableStateOf(0) }
         LaunchedEffect(key1=mContextualContainer?.guidePayload?.guide?.extraJson) {
             userPoints=0
             currentQuestionIndex=0
+
             when (val result = parseJson( mContextualContainer?.guidePayload?.guide?.extraJson))
             {
                 is DataState.Error ->
                 {
                     parsingError = result.errorMsg
                     mViewModel.updateState(){
-                        it.apply { quizStatus=QuizStatus.ERROR }
+                        it.apply { quizStatus=QuizStatus.FAIL }
                     }
                 }
 
                 is DataState.Success ->
                 {
-                    mViewModel.updateQuiz(result.data)
-//                    mViewModel.startTimer()
+
+
+
+                    if(mContextualContainer?.getStringTag("extraJson","")==mContextualContainer?.guidePayload?.guide?.extraJson && mContextualContainer?.getIntegerTag(TAG_QUIZ_COMPLETED)==1)
+                    {
+                        isDialogShowing=false
+                        return@LaunchedEffect
+                    }
+                    if(mContextualContainer?.getIntegerTag(TAG_QUIZ_LOCKED)==1)
+                    {
+
+                        mContextualContainer.getIntegerTag(TAG_QUIZ_LOCKED_REMAINING_TIME,-1).let {
+                            if(it!=-1)
+                                result.data.fail?.actionData?.lockoutSeconds=it
+                        }
+                        mViewModel.updateQuiz(result.data,QuizStatus.FAIL)
+                        return@LaunchedEffect
+                    }
+
+                    isDialogShowing=true
+                    mViewModel.updateQuiz(result.data,QuizStatus.STARTED)
+                    mContextualContainer?.clicked()
+
+
                 }
             }
 
@@ -123,8 +155,22 @@ class QuizGatekeeperGuideBlock
                     }
                     if (mQuizState.quizStatus == QuizStatus.FAIL)
                     {
-                        LockedOut(mQuizGK?.fail?.lockoutSeconds?.toLong()?:0L)
+
+
+                        mQuizGK?.fail?.actionData?.let {
+                            mContextualContainer?.setTag("Quiz_fail_datetime", getCurrentTime().toString())
+                            if(it.key.isNullOrBlank().not())
+                            {
+                                mContextualContainer?.setTag(it.key!!,it.value.toString())
+                            }
+                        }
+
+                        mContextualContainer?.tagManager?.setNumericTag(TAG_QUIZ_LOCKED,1)
+                        LockedOut(mQuizGK?.fail?.actionData?.lockoutSeconds?.toLong()?:0L)
                         {
+                            mContextualContainer?.setTag(TAG_QUIZ_LOCKED,0)
+                            mContextualContainer?.setTag(TAG_QUIZ_COMPLETED,1)
+                            mContextualContainer?.setTag("extraJson", mContextualContainer.guidePayload.guide?.extraJson.toString())
                             isDialogShowing=false
                         }
                         return@Card
@@ -134,16 +180,18 @@ class QuizGatekeeperGuideBlock
                         ResultScreen(userPoints,mViewModel.quizQuestionsSize)
                         {
                             //DO ACTION NEED TO BE DONE IN PASS
-                            mQuizGK?.pass?.quizAction?.setTag?.let {
-                                if(it.key=="Quiz_pass_datetime" && getCurrentTime()!=null)
+                            mQuizGK?.pass?.actionData?.let {
+
+                                mContextualContainer?.setTag("Quiz_pass_datetime", getCurrentTime().toString())
+                                mContextualContainer?.setTag("extraJson", mContextualContainer.guidePayload?.guide?.extraJson.toString())
+
+                                mContextualContainer?.setTag(TAG_QUIZ_COMPLETED,1)
+                                if(it.key.isNullOrBlank().not())
                                 {
-                                    mContextualContainer?.tagManager?.setDateTimeTag(it.key!!, getCurrentTime()!!)
-                                }
-                                else
-                                {
-                                    mContextualContainer?.tagManager?.setStringTag(it.key!!,it.value.toString())
+                                    mContextualContainer?.setTag(it.key!!,it.value.toString())
                                 }
                             }
+                            mContextualContainer?.complete()
                             isDialogShowing=false;
                         }
                         return@Card
@@ -217,18 +265,15 @@ class QuizGatekeeperGuideBlock
                 }
             }
         }
+        else{
+            onDone(userPoints==mQuizGK?.questions?.size)
+        }
 
 
     }
-    fun getCurrentTime():OffsetDateTime?
+    fun getCurrentTime():Long?
     {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        {
-            OffsetDateTime.now()
-        } else
-        {
-            null
-        }
+        return Date().time
     }
     fun Long.toHoursMinutesAndSeconds(): String {
         val totalSeconds =  this
@@ -244,7 +289,7 @@ class QuizGatekeeperGuideBlock
 
 
         Row(modifier = modifier){
-            Text(text = "Retries left : ${retriesLeft}",  style = typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+            Text(text = "Attempts left : ${retriesLeft}",  style = typography.titleMedium.copy(fontWeight = FontWeight.Bold))
             Spacer(modifier = Modifier.weight(1f))
 
         }
@@ -256,7 +301,6 @@ class QuizGatekeeperGuideBlock
     @Composable
     fun LockedOut(lockOutTime:Long,onUnlocked:()->Unit)
     {
-        Log.d("TAG", "LockedOut: ${lockOutTime}")
         var timeToUnlock by remember { mutableStateOf(lockOutTime) }
         if(timeToUnlock<=0L)
         {
@@ -277,6 +321,8 @@ class QuizGatekeeperGuideBlock
             repeat(lockOutTime.toInt()) {
                 delay(1000) // Delay for 1 second
                 timeToUnlock -= 1
+                if(timeToUnlock.toInt()%10==0) //AFTER 10 second save remaining time
+                     mContextualContainer?.setTag(TAG_QUIZ_LOCKED_REMAINING_TIME,timeToUnlock.toInt())
             }
         }
     }
@@ -284,9 +330,9 @@ class QuizGatekeeperGuideBlock
 
     @Composable
     fun ErrorScreen(
-        message: String = "Please Wait",
-        detailMsg: String = "",
         modifier: Modifier = Modifier,
+        message: String = "Please Wait",
+        detailMsg: String = ""
     )
     {
         Column(
@@ -421,6 +467,9 @@ class QuizGatekeeperGuideBlock
         Row(modifier = Modifier
             .wrapContentHeight()
             .fillMaxWidth()
+            .clickable {
+                onClick(answer)
+            }
             .drawBehind {
                 drawRoundRect(
                     color = primaryColor!!, topLeft = Offset(0f, 0f), size = Size(size.width, size.height), cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx()), style = Stroke(width = 5.0f, cap = StrokeCap.Round)
@@ -428,6 +477,7 @@ class QuizGatekeeperGuideBlock
             }
             .padding(horizontal = 10.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
+
                 text = answer?.label
                     ?: "", style = typography.titleSmall, modifier = Modifier.weight(1f)
             )
@@ -468,7 +518,6 @@ class QuizGatekeeperGuideBlock
 
         }
     }
-
     private fun parseJson(json: String?): DataState<QuizGK>
     {
         if (mQuizGK == null && json != null)

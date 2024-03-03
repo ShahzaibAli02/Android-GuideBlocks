@@ -5,10 +5,11 @@ import com.google.gson.annotations.SerializedName
 
 data class QuizGK(
     @SerializedName("fail")
-    var fail: Fail? = null,
+    var fail: Fail? = Fail(),
+    @SerializedName("guideBlockKey")
+    var guideBlockKey: String? = "",
     @SerializedName("pass")
-    var pass: Pass? = null,
-    @SerializedName("Questions")
-    var questions: List<Question?>? = null,
-
+    var pass: Pass? = Pass(),
+    @SerializedName("questions")
+    var questions: List<Question>? = listOf()
 )
