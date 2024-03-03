@@ -1,6 +1,6 @@
 ## Fancy Announcement
 
-In this example, we show how to make a Fancy Announcement, just like the crazy ones your Designer comes up with 🤣. Its a simple example to get you started with Contextual Extensibility without needing to hard-code your changes every time you want to update the tip.
+In this example, we show how to make a  Quiz Dialog, just like the crazy ones your Designer comes up with 🤣. Its a simple example to get you started with Contextual Extensibility without needing to hard-code your changes every time you want to update the tip.
 
 1. Create an account at [Contextual Dashboard](https://dashboard.contextu.al/ "Contextual Dashboard").
 2. Install the Contextual SDK following the instructions for IOS or Android.
@@ -9,7 +9,7 @@ In this example, we show how to make a Fancy Announcement, just like the crazy o
 **In your build.gradle add:**
 
 ```
-implementation 'com.github.GuideBlocks-org:Android-GuideBlocks:0.0.4', {
+implementation 'com.github.GuideBlocks-org:Android-GuideBlocks:LATEST_VERSION', {
         exclude group: 'com.google.android.material'
         exclude group: 'com.github.bumptech.glide'
     }
@@ -22,34 +22,69 @@ import com.contextu.al.quizgatekeeper.QuizGatekeeperGuideBlock
 import com.contextu.al.core.CtxEventObserver
 ```
 
-4. for the GuideBlock you wish to use, then Copy-Paste the instantiation of the Guide Component AFTER the Contextual SDK registration.
+4. for the GuideBlock you wish to use, then Copy-Paste the instantiation of the Guide Component AFTER the Contextual SDK registration. [XML BASED ANDROID PROJECT]
 
 ```
-        val myQuizGateKeeper = "QuizGateKeeper"
-        Contextual.registerGuideBlock(myQuizGateKeeper).observe(this){ contextualContainer ->
-            if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(myQuizGateKeeper)) {
-                mBinding.composeView.isVisible=true
-                mBinding.composeView.apply {
+       val myQuizGateKeeperGuide = "QuizGateKeeper"
+        Contextual.registerGuideBlock(myQuizGateKeeperGuide).observe(this) { contextualContainer ->
+            if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(myQuizGateKeeperGuide))
+            {
+                val mComposeView: ComposeView = (mBinding.root.children.find { it.tag == "myComposeView" }?: ComposeView(this)) as ComposeView
+                mComposeView.tag = "myComposeView";
+                mComposeView.apply {
                     setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
                     setContent {
                         MaterialTheme {
                             QuizGatekeeperGuideBlock().show(
-                                activity = this@MainActivity,
-                                mContextualContainer = contextualContainer
-                            )
+                                activity = this@MainActivity, mContextualContainer = contextualContainer
+                            ) { result ->
+                                mBinding.root.removeView(mComposeView)
+                            }
                         }
                     }
+                } //ADD VIEW ONLY IF ITS NOT ALREADY ADDED
+                if (mBinding.root.contains(mComposeView).not())
+                {
+                    mBinding.root.addView(mComposeView)
                 }
             }
         }
 ```
+
+
+5. for the GuideBlock you wish to use, then Copy-Paste the instantiation of the Guide Component AFTER the Contextual SDK registration. [COMPOSE PROJECT]
+
+```
+               MaterialTheme {
+                            val activity = context as? AppCompatActivity
+                            val lifecycleOwner = LocalLifecycleOwner.current
+                            val guideName = "QuizGateKeeper"
+                            var mContextualContainer: ContextualContainer? by remember { mutableStateOf(null)}
+                            SideEffect {
+                                Contextual.registerGuideBlock(guideName).observe(lifecycleOwner) { contextualContainer ->
+                                    mContextualContainer=contextualContainer
+                                }
+                            }
+                            if(mContextualContainer!=null && activity!=null)
+                            {
+                                QuizGatekeeperGuideBlock().show(
+                                    activity = activity, mContextualContainer = mContextualContainer
+                                ) { result ->
+
+                                  // QUIZ FINISHED Any task to do here
+
+                                }
+                            }
+
+                        }
+```
  
-5. Build your App and Run it on a phone or
-6. Go to the Dashboard and create a guide:
+6. Build your App and Run it on a phone or
+7. Go to the Dashboard and create a guide:
 * choose “Display the guides on any screen of your app” and
 * pick one of the “Standard” Contextual Announcement Templates.
 * Preview the Announcement on your Phone - it should look similar to the template
-7. Now go to the Extensibility section in the sidebar and paste in the JSON as follows:
+8. Now go to the Extensibility section in the sidebar and paste in the JSON as follows:
    `
    {
    "guideBlockKey": "QuizGateKeeper",
@@ -92,8 +127,8 @@ import com.contextu.al.core.CtxEventObserver
    "fail": {
    "action": "restartQuiz",
    "action_data": {
-   "key": "Quiz_fail_datetime",
-   "value": "@now",
+   "key": "any_key",
+   "value": "any_value",
    "attempts": 2,
    "lockout_seconds": 600,
    "allow_screen_access": false
@@ -102,8 +137,8 @@ import com.contextu.al.core.CtxEventObserver
    "pass": {
    "action": "setTag",
    "action_data": {
-   "key": "Quiz_pass_datetime",
-   "value": "@now",
+   "key": "any_key",
+   "value": "any_value",
    "allow_screen_access": true
    }
    }
@@ -111,7 +146,7 @@ import com.contextu.al.core.CtxEventObserver
    `
 * Match the name in the JSON to the name of your wrapper in the code
 JSON editing
-8. If you are still in Preview Mode, then you should see the Announcement will magically change to Fancy Announcement
-9. Change the Title and Content and buttons. Play around with it and see the results.
-10. Save the guide and show to your Product Team, once you release this version of the App they can launch Fancy Announcement to whoever they want, whenever they want.
+9. If you are still in Preview Mode, then you should see the Announcement will magically change to Quiz Dialog
+10. Change the Title and Content and buttons. Play around with it and see the results.
+11. Save the guide and show to your Product Team, once you release this version of the App they can launch Quiz Dialog  to whoever they want, whenever they want.
 
