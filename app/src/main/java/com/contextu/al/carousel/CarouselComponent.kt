@@ -40,7 +40,7 @@ import com.contextu.al.common.ButtonComponent
 import com.contextu.al.common.model.ButtonModel
 import com.contextu.al.common.model.TextModel
 import com.contextu.al.common.toSP
-import com.contextu.al.extensions.toBoxModifier
+import com.contextu.al.common.extensions.toBoxModifier
 import com.contextu.al.model.customguide.ContextualContainer
 import com.contextu.al.model.ui.CarouselItem
 import com.contextu.al.model.ui.Text

@@ -17,7 +17,7 @@
 package com.contextu.al.barcodescanner.camera
 
 import android.graphics.Bitmap
-import com.contextu.al.utils.CameraUtils
+import com.contextu.al.common.utils.CameraUtils
 import java.nio.ByteBuffer
 
 interface InputInfo {

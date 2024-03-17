@@ -10,8 +10,8 @@ import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.WindowManager
 import com.contextu.al.R
-import com.contextu.al.utils.CameraUtils
-import com.contextu.al.utils.PreferenceUtils
+import com.contextu.al.common.utils.CameraUtils
+import com.contextu.al.common.utils.PreferenceUtils
 import com.google.android.gms.common.images.Size
 import java.io.IOException
 import java.nio.ByteBuffer

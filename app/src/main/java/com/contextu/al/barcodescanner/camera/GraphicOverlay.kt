@@ -6,7 +6,7 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
-import com.contextu.al.utils.CameraUtils
+import com.contextu.al.common.utils.CameraUtils
 import java.util.ArrayList
 
 /**

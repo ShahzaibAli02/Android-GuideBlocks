@@ -30,8 +30,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import com.contextu.al.model.customguide.ContextualContainer
 import com.contextu.al.model.customguide.Feedback
-import com.contextu.al.extensions.getIntegerTag
-import com.contextu.al.extensions.setTag
+import com.contextu.al.common.extensions.getIntegerTag
+import com.contextu.al.common.extensions.setTag
 import com.trafi.ratingseekbar.RatingSeekBar
 import com.google.gson.JsonObject as JsonObject1
 

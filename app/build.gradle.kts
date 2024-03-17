@@ -12,7 +12,6 @@ android {
     defaultConfig {
         minSdk = 24
         targetSdk = 34
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -23,8 +22,8 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
             )
         }
     }
@@ -37,6 +36,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
 
     composeOptions {
@@ -97,13 +97,18 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
 
-    implementation(group="com.contextu.al.dev",name="contextual",version = "3.+") {
-        exclude(group = "com.github.bumptech.glide")
-        exclude(group = "androidx.room")
-    }
+        implementation(group="com.contextu.al.dev",name="contextual",version = "3.+") {
+            exclude(group = "com.github.bumptech.glide")
+            exclude(group = "androidx.room")
+        }
+//
+//    implementation(project(":contextual")) {
+//        exclude(group = "com.github.bumptech.glide")
+//        exclude(group = "androidx.room")
+//    }
 
     implementation("com.google.code.gson:gson:2.8.8")
-    
+
     //coil
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("io.coil-kt:coil-gif:2.4.0")

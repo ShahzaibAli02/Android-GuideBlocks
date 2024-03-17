@@ -15,7 +15,7 @@ import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
-import com.contextu.al.extensions.toBoxModifier
+import com.contextu.al.common.extensions.toBoxModifier
 import com.contextu.al.model.ui.Image
 
 @Composable

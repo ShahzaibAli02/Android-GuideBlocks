@@ -7,7 +7,7 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.widget.FrameLayout
 import com.contextu.al.R
-import com.contextu.al.utils.CameraUtils
+import com.contextu.al.common.utils.CameraUtils
 import com.google.android.gms.common.images.Size
 import java.io.IOException
 

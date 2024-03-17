@@ -50,9 +50,9 @@ import com.contextu.al.mychecklist.composables.CheckListRow
 import com.contextu.al.mychecklist.composables.LazyDivider
 import com.contextu.al.mychecklist.models.Task
 import com.contextu.al.mychecklist.viewModels.TaskViewModel
-import com.contextu.al.extensions.getIntegerTag
-import com.contextu.al.extensions.getStringTag
-import com.contextu.al.extensions.setTag
+import com.contextu.al.common.extensions.getIntegerTag
+import com.contextu.al.common.extensions.getStringTag
+import com.contextu.al.common.extensions.setTag
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -177,7 +177,6 @@ class MyCheckListGuideBlocks
                         var enabled by remember { mutableStateOf(false) }
                         var checked by remember { mutableStateOf(false) }
                         LaunchedEffect(Random.nextInt()) {
-                            Log.d("TAG", "LaunchedEffect: "+contextualContainer)
                             contextualContainer?.let {
                                 enabled = task.getEnabled(contextualContainer)
                                 checked = task.getChecked(contextualContainer)
