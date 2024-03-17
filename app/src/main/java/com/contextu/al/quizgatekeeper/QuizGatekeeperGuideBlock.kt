@@ -51,11 +51,11 @@ import androidx.compose.ui.window.Dialog
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import com.contextu.al.R
-import com.contextu.al.extensions.clicked
-import com.contextu.al.extensions.complete
-import com.contextu.al.extensions.getIntegerTag
-import com.contextu.al.extensions.getStringTag
-import com.contextu.al.extensions.setTag
+import com.contextu.al.common.extensions.clicked
+import com.contextu.al.common.extensions.complete
+import com.contextu.al.common.extensions.getIntegerTag
+import com.contextu.al.common.extensions.getStringTag
+import com.contextu.al.common.extensions.setTag
 import com.contextu.al.model.customguide.ContextualContainer
 import com.contextu.al.quizgatekeeper.enums.QuizStatus
 import com.contextu.al.quizgatekeeper.model.Answer

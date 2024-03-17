@@ -43,7 +43,7 @@ import com.contextu.al.common.AppTextView
 import com.contextu.al.common.ContainerComponent
 import com.contextu.al.common.model.BarCodeModel
 import com.contextu.al.model.customguide.GuidePayload
-import com.contextu.al.utils.CameraUtils
+import com.contextu.al.common.utils.CameraUtils
 import com.google.android.gms.common.internal.Objects
 import com.google.android.material.chip.Chip
 import com.google.gson.Gson

@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Path
 import com.contextu.al.barcodescanner.camera.GraphicOverlay
 import com.contextu.al.common.model.BarCodeModel
-import com.contextu.al.utils.PreferenceUtils
+import com.contextu.al.common.utils.PreferenceUtils
 import com.google.mlkit.vision.barcode.common.Barcode
 
 /** Guides user to move camera closer to confirm the detected barcode.  */
