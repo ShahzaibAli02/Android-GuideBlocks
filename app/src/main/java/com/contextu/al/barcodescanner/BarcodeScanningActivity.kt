@@ -2,6 +2,7 @@ package com.contextu.al.barcodescanner
 
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -65,7 +66,10 @@ class BarcodeScanningActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        Log.d(
+                "BARCODESCANNER",
+                "onCreate: "
+        )
         setContentView(R.layout.activity_live_barcode)
         preview = findViewById(R.id.camera_preview)
         graphicOverlay = findViewById<GraphicOverlay>(R.id.camera_preview_graphic_overlay).apply {
@@ -307,13 +311,19 @@ class BarcodeScanningActivity : AppCompatActivity() {
                     intent.putExtras(Bundle().apply {
                         putString(BARCODE_DATA, barcode.rawValue)
                     })
-                    setResult(Activity.RESULT_OK, intent)
+                    BarcodeScannerGuideBlock.resultListener?.onResultReceived(Activity.RESULT_OK, intent)
                     finish()
                 }, delay)
             }
         })
 
 
+    }
+
+    override fun onBackPressed()
+    {
+        BarcodeScannerGuideBlock.resultListener?.onResultReceived(Activity.RESULT_CANCELED,null)
+        super.onBackPressed()
     }
 
     companion object {

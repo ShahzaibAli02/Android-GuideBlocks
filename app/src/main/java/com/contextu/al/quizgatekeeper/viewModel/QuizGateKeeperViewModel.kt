@@ -48,46 +48,9 @@ class QuizGateKeeperViewModel:ViewModel()
     }
     fun updateState(quizState: (QuizState)->QuizState)
     {
-        Log.d("TAG", "updateState BEFOR: ${_quizState.value}")
         quizState(_quizState.value.copy()).let {newQuizState->
-            Log.d("TAG", "updateState: ${newQuizState}")
             _quizState.value=newQuizState
         }
     }
 
-    private var timer: CountDownTimer? = null
-//    fun startTimer() {
-//        timer?.cancel()
-//        timer = object : CountDownTimer( _quizState.value.time, 1000) {
-//            override fun onTick(millisUntilFinished: Long) {
-//                updateState(){quizState->
-//                    if(quizState.quizStatus==QuizStatus.STARTED)
-//                    {
-//                        quizState.apply {
-//                            time=millisUntilFinished
-//                        }
-//                    }
-//                    else
-//                    {
-//                        cancel()
-//                        null
-//                    }
-//                }
-//            }
-//
-//            override fun onFinish() {
-//                updateState(){quizState->
-//                    if(quizState.quizStatus==QuizStatus.STARTED)
-//                    {
-//                        quizState.apply {
-//                            quizStatus=QuizStatus.TIMEUP
-//                        }
-//                    }
-//                    else null
-//
-//                }
-//            }
-//        }
-//        timer?.start()
-//    }
 }

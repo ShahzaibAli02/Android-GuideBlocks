@@ -7,6 +7,9 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Window
 import com.contextu.al.R
+import com.contextu.al.common.extensions.clickedOutside
+import com.contextu.al.common.extensions.dismiss
+import com.contextu.al.model.customguide.ContextualContainer
 import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
@@ -15,9 +18,10 @@ import nl.dionsegijn.konfetti.xml.listeners.OnParticleSystemUpdateListener
 import java.util.concurrent.TimeUnit
 
 
-class ConfettiGuideBlocks(private val activity: Activity): Dialog(activity) {
+class ConfettiGuideBlocks(private val activity: Activity,private val contextualContainer: ContextualContainer): Dialog(activity) {
 
     private lateinit var viewKonfetti: KonfettiView
+    private var closed_manually:Boolean=false
     init {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -43,6 +47,7 @@ class ConfettiGuideBlocks(private val activity: Activity): Dialog(activity) {
         viewKonfetti.onParticleSystemUpdateListener = object : OnParticleSystemUpdateListener{
             override fun onParticleSystemEnded(view: KonfettiView, party: Party, activeSystems: Int) {
                 onEnd
+                closed_manually=true
                 dismiss()
             }
 
@@ -51,5 +56,13 @@ class ConfettiGuideBlocks(private val activity: Activity): Dialog(activity) {
             }
 
         }
+    }
+    override fun dismiss() {
+
+        if(closed_manually)
+            contextualContainer.dismiss()
+        else
+            contextualContainer.clickedOutside()
+        super.dismiss()
     }
 }

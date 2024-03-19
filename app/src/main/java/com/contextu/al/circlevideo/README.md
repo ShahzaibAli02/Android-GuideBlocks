@@ -29,7 +29,7 @@ for the GuideBlock you wish to use, then add
         Contextual.registerGuideBlock(circleVideoGuideBlocks).observe(this){
             contextualContainer ->
             if(contextualContainer.guidePayload.guide.guideBlock.contentEquals(circleVideoGuideBlocks)){
-                val circleVideoView = CircleVideoGuideBlock(this@MainActivity)
+                val circleVideoView = CircleVideoGuideBlock(this@MainActivity,contextualContainer)
                 val contentUrl:String = contextualContainer.guidePayload.guide.contentText.text ?: ""
                 circleVideoView.show(contentUrl)
             }

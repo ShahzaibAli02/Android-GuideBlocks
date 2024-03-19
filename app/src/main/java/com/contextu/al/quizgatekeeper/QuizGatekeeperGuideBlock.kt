@@ -52,6 +52,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import com.contextu.al.R
 import com.contextu.al.common.extensions.clicked
+import com.contextu.al.common.extensions.clickedOutside
 import com.contextu.al.common.extensions.complete
 import com.contextu.al.common.extensions.getIntegerTag
 import com.contextu.al.common.extensions.getStringTag
@@ -70,26 +71,28 @@ class QuizGatekeeperGuideBlock
 {
 
 
-
-
     private var mQuizGK: QuizGK? = null
     private lateinit var typography: Typography
     private var primaryColor: Color? = null
-    private val TAG_QUIZ_LOCKED="is_quiz_user_locked"
-    private val TAG_QUIZ_LOCKED_REMAINING_TIME="quiz_user_locked_remaining_time"
-    private val TAG_QUIZ_COMPLETED="is_quiz_user_completed"
-    private lateinit var activity:AppCompatActivity
-    private var mContextualContainer:ContextualContainer? = null
-    @Composable
-    fun show(activity: AppCompatActivity, mContextualContainer: ContextualContainer?,onDone:(result:Boolean)->Unit)
+    private val TAG_QUIZ_LOCKED = "is_quiz_user_locked"
+    private val TAG_QUIZ_LOCKED_REMAINING_TIME = "quiz_user_locked_remaining_time"
+    private val TAG_QUIZ_COMPLETED = "is_quiz_user_completed"
+    private lateinit var activity: AppCompatActivity
+    private var mContextualContainer: ContextualContainer? = null
+
+    @Composable fun show(
+        activity: AppCompatActivity,
+        mContextualContainer: ContextualContainer?,
+        onDone: (result: Boolean) -> Unit,
+    )
     {
 
 
-        this.mContextualContainer=mContextualContainer
-        this.activity=activity
-        val mViewModel:QuizGateKeeperViewModel by activity.viewModels()
-        val mQuizGK by  mViewModel.quizGK.collectAsState()
-        val mQuizState by  mViewModel.quizState.collectAsState()
+        this.mContextualContainer = mContextualContainer
+        this.activity = activity
+        val mViewModel: QuizGateKeeperViewModel by activity.viewModels()
+        val mQuizGK by mViewModel.quizGK.collectAsState()
+        val mQuizState by mViewModel.quizState.collectAsState()
         var currentQuestionIndex by remember { mutableIntStateOf(0) }
         var userPoints: Int by remember { mutableStateOf(0) }
 
@@ -98,17 +101,17 @@ class QuizGatekeeperGuideBlock
         primaryColor = MaterialTheme.colorScheme.primary
         typography = MaterialTheme.typography;
 
-        LaunchedEffect(key1=mContextualContainer?.guidePayload?.guide?.extraJson) {
-            userPoints=0
-            currentQuestionIndex=0
+        LaunchedEffect(key1 = mContextualContainer?.guidePayload?.guide?.extraJson) {
+            userPoints = 0
+            currentQuestionIndex = 0
 
-            when (val result = parseJson( mContextualContainer?.guidePayload?.guide?.extraJson))
+            when (val result = parseJson(mContextualContainer?.guidePayload?.guide?.extraJson))
             {
                 is DataState.Error ->
                 {
                     parsingError = result.errorMsg
-                    mViewModel.updateState(){
-                        it.apply { quizStatus=QuizStatus.FAIL }
+                    mViewModel.updateState() {
+                        it.apply { quizStatus = QuizStatus.FAIL }
                     }
                 }
 
@@ -116,25 +119,36 @@ class QuizGatekeeperGuideBlock
                 {
 
 
-
-                    if(mContextualContainer?.getStringTag("extraJson","")==mContextualContainer?.guidePayload?.guide?.extraJson && mContextualContainer?.getIntegerTag(TAG_QUIZ_COMPLETED)==1)
+                    if (mContextualContainer?.getStringTag(
+                                "extraJson",
+                                ""
+                        ) == mContextualContainer?.guidePayload?.guide?.extraJson && mContextualContainer?.getIntegerTag(TAG_QUIZ_COMPLETED) == 1
+                    )
                     {
-                        isDialogShowing=false
+                        isDialogShowing = false
                         return@LaunchedEffect
                     }
-                    if(mContextualContainer?.getIntegerTag(TAG_QUIZ_LOCKED)==1)
+                    if (mContextualContainer?.getIntegerTag(TAG_QUIZ_LOCKED) == 1)
                     {
 
-                        mContextualContainer.getIntegerTag(TAG_QUIZ_LOCKED_REMAINING_TIME,-1).let {
-                            if(it!=-1)
-                                result.data.fail?.actionData?.lockoutSeconds=it
+                        mContextualContainer.getIntegerTag(
+                                TAG_QUIZ_LOCKED_REMAINING_TIME,
+                                -1
+                        ).let {
+                            if (it != -1) result.data.fail?.actionData?.lockoutSeconds = it
                         }
-                        mViewModel.updateQuiz(result.data,QuizStatus.FAIL)
+                        mViewModel.updateQuiz(
+                                result.data,
+                                QuizStatus.FAIL
+                        )
                         return@LaunchedEffect
                     }
 
-                    isDialogShowing=true
-                    mViewModel.updateQuiz(result.data,QuizStatus.STARTED)
+                    isDialogShowing = true
+                    mViewModel.updateQuiz(
+                            result.data,
+                            QuizStatus.STARTED
+                    )
                     mContextualContainer?.clicked()
 
 
@@ -144,9 +158,12 @@ class QuizGatekeeperGuideBlock
         }
 
 
-        if(isDialogShowing)
+        if (isDialogShowing)
         {
-            Dialog(onDismissRequest = { }) {
+            Dialog(onDismissRequest = {
+                mContextualContainer?.clickedOutside()
+
+            }) {
                 Card(modifier = Modifier.fillMaxWidth()) {
                     if (mQuizState.quizStatus == QuizStatus.NONE)
                     {
@@ -158,41 +175,71 @@ class QuizGatekeeperGuideBlock
 
 
                         mQuizGK?.fail?.actionData?.let {
-                            mContextualContainer?.setTag("Quiz_fail_datetime", getCurrentTime().toString())
-                            if(it.key.isNullOrBlank().not())
+                            mContextualContainer?.setTag(
+                                    "Quiz_fail_datetime",
+                                    getCurrentTime().toString()
+                            )
+                            if (it.key.isNullOrBlank().not())
                             {
-                                mContextualContainer?.setTag(it.key!!,it.value.toString())
+                                mContextualContainer?.setTag(
+                                        it.key!!,
+                                        it.value.toString()
+                                )
                             }
                         }
 
-                        mContextualContainer?.tagManager?.setNumericTag(TAG_QUIZ_LOCKED,1)
-                        LockedOut(mQuizGK?.fail?.actionData?.lockoutSeconds?.toLong()?:0L)
-                        {
-                            mContextualContainer?.setTag(TAG_QUIZ_LOCKED,0)
-                            mContextualContainer?.setTag(TAG_QUIZ_COMPLETED,1)
-                            mContextualContainer?.setTag("extraJson", mContextualContainer.guidePayload.guide?.extraJson.toString())
-                            isDialogShowing=false
+                        mContextualContainer?.tagManager?.setNumericTag(
+                                TAG_QUIZ_LOCKED,
+                                1
+                        )
+                        LockedOut(mQuizGK?.fail?.actionData?.lockoutSeconds?.toLong() ?: 0L) {
+                            mContextualContainer?.setTag(
+                                    TAG_QUIZ_LOCKED,
+                                    0
+                            )
+                            mContextualContainer?.setTag(
+                                    TAG_QUIZ_COMPLETED,
+                                    1
+                            )
+                            mContextualContainer?.setTag(
+                                    "extraJson",
+                                    mContextualContainer.guidePayload.guide?.extraJson.toString()
+                            )
+                            isDialogShowing = false
                         }
                         return@Card
                     }
-                    if(mQuizState.quizStatus==QuizStatus.PASS)
+                    if (mQuizState.quizStatus == QuizStatus.PASS)
                     {
-                        ResultScreen(userPoints,mViewModel.quizQuestionsSize)
-                        {
-                            //DO ACTION NEED TO BE DONE IN PASS
+                        ResultScreen(
+                                userPoints,
+                                mViewModel.quizQuestionsSize
+                        ) { //DO ACTION NEED TO BE DONE IN PASS
                             mQuizGK?.pass?.actionData?.let {
 
-                                mContextualContainer?.setTag("Quiz_pass_datetime", getCurrentTime().toString())
-                                mContextualContainer?.setTag("extraJson", mContextualContainer.guidePayload?.guide?.extraJson.toString())
+                                mContextualContainer?.setTag(
+                                        "Quiz_pass_datetime",
+                                        getCurrentTime().toString()
+                                )
+                                mContextualContainer?.setTag(
+                                        "extraJson",
+                                        mContextualContainer.guidePayload?.guide?.extraJson.toString()
+                                )
 
-                                mContextualContainer?.setTag(TAG_QUIZ_COMPLETED,1)
-                                if(it.key.isNullOrBlank().not())
+                                mContextualContainer?.setTag(
+                                        TAG_QUIZ_COMPLETED,
+                                        1
+                                )
+                                if (it.key.isNullOrBlank().not())
                                 {
-                                    mContextualContainer?.setTag(it.key!!,it.value.toString())
+                                    mContextualContainer?.setTag(
+                                            it.key!!,
+                                            it.value.toString()
+                                    )
                                 }
                             }
                             mContextualContainer?.complete()
-                            isDialogShowing=false;
+                            isDialogShowing = false;
                         }
                         return@Card
                     }
@@ -203,12 +250,16 @@ class QuizGatekeeperGuideBlock
                     }
                     if (mQuizState.quizStatus == QuizStatus.RESULT)
                     {
-                        ResultScreen(userPoints, mViewModel.quizQuestionsSize,mQuizState.retriesLeft,mViewModel.quizAttemptsLimit){
+                        ResultScreen(
+                                userPoints,
+                                mViewModel.quizQuestionsSize,
+                                mQuizState.retriesLeft,
+                                mViewModel.quizAttemptsLimit
+                        ) {
 
                             //CHECKING IF USER HAVE ANY RETRIES LEFT
-                            if(mQuizState.retriesLeft!=0)
-                            {
-                                //REST QUIZ
+                            if (mQuizState.retriesLeft != 0)
+                            { //REST QUIZ
                                 userPoints = 0
                                 currentQuestionIndex = 0
                                 mViewModel.updateState() {
@@ -217,10 +268,8 @@ class QuizGatekeeperGuideBlock
                                         quizStatus = QuizStatus.STARTED
                                     }
                                 }
-                            }
-                            else
-                            {
-                                //SHOW FAIL SCREEN
+                            } else
+                            { //SHOW FAIL SCREEN
                                 mViewModel.updateState() {
                                     it.apply {
                                         quizStatus = QuizStatus.FAIL
@@ -235,27 +284,39 @@ class QuizGatekeeperGuideBlock
                     if (mQuizState.quizStatus == QuizStatus.STARTED)
                     {
                         val currentQuestion = mQuizGK?.questions?.getOrNull(currentQuestionIndex)
-                        QuizHeader(modifier = Modifier.padding(10.dp),mQuizState.retriesLeft)
-                        Text(modifier = Modifier
-                            .align(Alignment.End)
-                            .padding(end = 10.dp, top = 5.dp),text = "Question ${currentQuestionIndex+1} of ${mViewModel.quizQuestionsSize}", style = typography.titleSmall)
+                        QuizHeader(
+                                modifier = Modifier.padding(10.dp),
+                                mQuizState.retriesLeft
+                        )
+                        Text(
+                                modifier = Modifier
+                                    .align(Alignment.End)
+                                    .padding(
+                                            end = 10.dp,
+                                            top = 5.dp
+                                    ),
+                                text = "Question ${currentQuestionIndex + 1} of ${mViewModel.quizQuestionsSize}",
+                                style = typography.titleSmall
+                        )
 
-                        Quiz(modifier = Modifier.padding(10.dp),currentQuestion,isLastQuestion = currentQuestionIndex >= mViewModel.quizQuestionsSize-1) { selectedAnswer ->
+                        Quiz(
+                                modifier = Modifier.padding(10.dp),
+                                currentQuestion,
+                                isLastQuestion = currentQuestionIndex >= mViewModel.quizQuestionsSize - 1
+                        ) { selectedAnswer ->
 
-                            if (selectedAnswer?.correct == true)
-                                userPoints += 1;
+                            if (selectedAnswer?.correct == true) userPoints += 1;
 
-                            if (currentQuestionIndex < mViewModel.quizQuestionsSize-1)
+                            if (currentQuestionIndex < mViewModel.quizQuestionsSize - 1)
                             {
                                 currentQuestionIndex++;
-                            }
-                            else
+                            } else
                             {
 
                                 //IF User passed show Pass Screen else show screen showing user his points
-                                val newQuizStatus=if(userPoints==mViewModel.quizQuestionsSize)  QuizStatus.PASS else if(mQuizState.retriesLeft!=0) QuizStatus.RESULT else QuizStatus.FAIL
-                                mViewModel.updateState(){
-                                    it.apply { quizStatus=newQuizStatus }
+                                val newQuizStatus = if (userPoints == mViewModel.quizQuestionsSize) QuizStatus.PASS else if (mQuizState.retriesLeft != 0) QuizStatus.RESULT else QuizStatus.FAIL
+                                mViewModel.updateState() {
+                                    it.apply { quizStatus = newQuizStatus }
                                 }
                             }
                         }
@@ -264,162 +325,235 @@ class QuizGatekeeperGuideBlock
 
                 }
             }
-        }
-        else{
-            onDone(userPoints==mQuizGK?.questions?.size)
+        } else
+        {
+            onDone(userPoints == mQuizGK?.questions?.size)
         }
 
 
     }
-    fun getCurrentTime():Long?
+
+    fun getCurrentTime(): Long?
     {
         return Date().time
     }
-    fun Long.toHoursMinutesAndSeconds(): String {
-        val totalSeconds =  this
+
+    fun Long.toHoursMinutesAndSeconds(): String
+    {
+        val totalSeconds = this
         val hours = totalSeconds / 3600
         val minutes = (totalSeconds % 3600) / 60
         val remainingSeconds = totalSeconds % 60
-        return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
+        return String.format(
+                "%02d:%02d:%02d",
+                hours,
+                minutes,
+                remainingSeconds
+        )
     }
 
-    @Composable
-    fun QuizHeader(modifier:Modifier = Modifier,retriesLeft:Int)
+    @Composable fun QuizHeader(modifier: Modifier = Modifier, retriesLeft: Int)
     {
 
 
-        Row(modifier = modifier){
-            Text(text = "Attempts left : ${retriesLeft}",  style = typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+        Row(modifier = modifier) {
+            Text(
+                    text = "Attempts left : ${retriesLeft}",
+                    style = typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            )
             Spacer(modifier = Modifier.weight(1f))
 
         }
 
-        HorizontalDivider(modifier = Modifier, thickness = 2.dp, color = primaryColor!!)
+        HorizontalDivider(
+                modifier = Modifier,
+                thickness = 2.dp,
+                color = primaryColor!!
+        )
 
     }
 
-    @Composable
-    fun LockedOut(lockOutTime:Long,onUnlocked:()->Unit)
+    @Composable fun LockedOut(lockOutTime: Long, onUnlocked: () -> Unit)
     {
         var timeToUnlock by remember { mutableStateOf(lockOutTime) }
-        if(timeToUnlock<=0L)
+        if (timeToUnlock <= 0L)
         {
             onUnlocked()
             return
         }
         Column(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(text = "You are locked !", style = typography.titleLarge.copy(fontWeight = FontWeight.Bold))
-            LottieAnimationViewWrapper(modifier = Modifier.size(200.dp), R.raw.lottie_locked )
-            Text(text = "Time to unlock : "+timeToUnlock.toHoursMinutesAndSeconds(), style = typography.titleMedium)
+            Text(
+                    text = "You are locked !",
+                    style = typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+            )
+            LottieAnimationViewWrapper(
+                    modifier = Modifier.size(200.dp),
+                    R.raw.lottie_locked
+            )
+            Text(
+                    text = "Time to unlock : " + timeToUnlock.toHoursMinutesAndSeconds(),
+                    style = typography.titleMedium
+            )
         }
         LaunchedEffect(Unit) {
             repeat(lockOutTime.toInt()) {
                 delay(1000) // Delay for 1 second
                 timeToUnlock -= 1
-                if(timeToUnlock.toInt()%10==0) //AFTER 10 second save remaining time
-                     mContextualContainer?.setTag(TAG_QUIZ_LOCKED_REMAINING_TIME,timeToUnlock.toInt())
+                if (timeToUnlock.toInt() % 10 == 0) //AFTER 10 second save remaining time
+                    mContextualContainer?.setTag(
+                            TAG_QUIZ_LOCKED_REMAINING_TIME,
+                            timeToUnlock.toInt()
+                    )
             }
         }
     }
 
 
-    @Composable
-    fun ErrorScreen(
+    @Composable fun ErrorScreen(
         modifier: Modifier = Modifier,
         message: String = "Please Wait",
-        detailMsg: String = ""
+        detailMsg: String = "",
     )
     {
         Column(
-            modifier = modifier
-                .padding(10.dp)
-                .fillMaxWidth()
+                modifier = modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
 
         ) {
 
-            Text(text = "Something went wrong ! ", style = typography.titleLarge.copy(fontWeight = FontWeight.Bold))
-            Text(text = detailMsg, style = typography.bodyMedium)
+            Text(
+                    text = "Something went wrong ! ",
+                    style = typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+            )
+            Text(
+                    text = detailMsg,
+                    style = typography.bodyMedium
+            )
             Spacer(modifier = Modifier.height(10.dp))
             Image(
-                colorFilter = ColorFilter.tint(color = Color.Red), modifier = Modifier
-                    .size(80.dp)
-                    .align(Alignment.CenterHorizontally), painter = painterResource(id = R.drawable.baseline_lock_24), contentDescription = "Lock"
+                    colorFilter = ColorFilter.tint(color = Color.Red),
+                    modifier = Modifier
+                        .size(80.dp)
+                        .align(Alignment.CenterHorizontally),
+                    painter = painterResource(id = R.drawable.baseline_lock_24),
+                    contentDescription = "Lock"
             )
 
         }
     }
 
 
-
-    @Composable
-    fun LoadingScreen(message: String = "Please Wait", modifier: Modifier = Modifier)
+    @Composable fun LoadingScreen(message: String = "Please Wait", modifier: Modifier = Modifier)
     {
         Column(
-            modifier = modifier
-                .padding(10.dp)
-                .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+                modifier = modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(text = message, style = typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
+            Text(
+                    text = message,
+                    style = typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
+            )
             Spacer(modifier = Modifier.height(5.dp))
             CircularProgressIndicator(modifier = Modifier.size(50.dp))
         }
     }
 
-    @Composable
-    fun ResultScreen(userPoints: Int, totalPoints: Int,remainingAttempts:Int=0,totalAttempts:Int=0,onRestart:()->Unit)
+    @Composable fun ResultScreen(
+        userPoints: Int,
+        totalPoints: Int,
+        remainingAttempts: Int = 0,
+        totalAttempts: Int = 0,
+        onRestart: () -> Unit,
+    )
     {
 
         Column(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val isFail=userPoints!=totalPoints
+            val isFail = userPoints != totalPoints
 
-            LottieAnimationViewWrapper(modifier = Modifier.size(200.dp),if(isFail) R.raw.lottie_fail else  R.raw.lottie_done)
+            LottieAnimationViewWrapper(
+                    modifier = Modifier.size(200.dp),
+                    if (isFail) R.raw.lottie_fail else R.raw.lottie_done
+            )
             Spacer(modifier = Modifier.height(5.dp))
             Row {
-                Text(text = "Status : ", style = typography.titleMedium)
-                Text(text =if(isFail) "Failed" else "Passed", color = if(isFail) colorResource(id = R.color.fail_quiz_color) else colorResource(id = R.color.pass_quiz_color),style = typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                Text(
+                        text = "Status : ",
+                        style = typography.titleMedium
+                )
+                Text(
+                        text = if (isFail) "Failed" else "Passed",
+                        color = if (isFail) colorResource(id = R.color.fail_quiz_color) else colorResource(id = R.color.pass_quiz_color),
+                        style = typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
             }
-            Text(modifier = Modifier.align(Alignment.CenterHorizontally),text = "Your scored ${userPoints}/${totalPoints} !", style = typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+            Text(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    text = "Your scored ${userPoints}/${totalPoints} !",
+                    style = typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            )
             Spacer(modifier = Modifier.height(10.dp))
-            ElevatedButton(enabled = true, modifier = Modifier.width(200.dp), shape = RoundedCornerShape(10.dp), onClick = {
-                onRestart()
-            }) {
-                Text(if(isFail) "Restart Quiz" else "Submit", style = typography.titleMedium)
+            ElevatedButton(
+                    enabled = true,
+                    modifier = Modifier.width(200.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = {
+                        onRestart()
+                    }) {
+                Text(
+                        if (isFail) "Restart Quiz" else "Submit",
+                        style = typography.titleMedium
+                )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            if(isFail) Text(modifier=Modifier.align(Alignment.End),text = "${remainingAttempts}/${totalAttempts} Attempts remaining.", style = typography.titleMedium.copy(fontSize = 10.sp,fontWeight = FontWeight.Bold))
+            if (isFail) Text(
+                    modifier = Modifier.align(Alignment.End),
+                    text = "${remainingAttempts}/${totalAttempts} Attempts remaining.",
+                    style = typography.titleMedium.copy(
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold
+                    )
+            )
 
         }
     }
 
-    @Composable
-    fun LottieAnimationViewWrapper(modifier:Modifier = Modifier,lottieID: Int) {
-        AndroidView(
-            modifier = modifier,
-            factory = { context ->
-                LottieAnimationView(context).apply {
-                    setAnimation(lottieID)
-                    playAnimation()
-                    repeatCount= LottieDrawable.INFINITE
-                }
-            },
-            update = { view ->
-                view.setAnimation(lottieID)
-                view.playAnimation()
-            }
-        )
+    @Composable fun LottieAnimationViewWrapper(modifier: Modifier = Modifier, lottieID: Int)
+    {
+        AndroidView(modifier = modifier,
+                factory = { context ->
+                    LottieAnimationView(context).apply {
+                        setAnimation(lottieID)
+                        playAnimation()
+                        repeatCount = LottieDrawable.INFINITE
+                    }
+                },
+                update = { view ->
+                    view.setAnimation(lottieID)
+                    view.playAnimation()
+                })
     }
-    @Composable
-    fun Quiz(modifier:Modifier = Modifier,question: Question?,isLastQuestion:Boolean=false, onAnswerDone: (answer: Answer?) -> Unit)
+
+    @Composable fun Quiz(
+        modifier: Modifier = Modifier,
+        question: Question?,
+        isLastQuestion: Boolean = false,
+        onAnswerDone: (answer: Answer?) -> Unit,
+    )
     {
 
         var answer: Answer? by remember { mutableStateOf(null) }
@@ -427,40 +561,44 @@ class QuizGatekeeperGuideBlock
             answer = null
         }
         Column(
-            modifier = modifier
-                .fillMaxWidth()
+                modifier = modifier.fillMaxWidth()
         ) {
             Text(
-                text = question?.question
-                    ?: "", style = typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                    text = question?.question ?: "",
+                    style = typography.titleLarge.copy(fontWeight = FontWeight.Bold)
             )
 
             question?.answers?.forEach { ans ->
                 val isSelected = answer == ans
-                QuizOptionRow(ans, isSelected) { selectedAns ->
+                QuizOptionRow(
+                        ans,
+                        isSelected
+                ) { selectedAns ->
                     answer = selectedAns
                 }
             }
 
-            //            Spacer(modifier = Modifier.height(10.dp))
-            //            QuizOptionRow()
-            //            Spacer(modifier = Modifier.height(10.dp))
-            //            QuizOptionRow()
-            //            Spacer(modifier = Modifier.height(10.dp))
-            //            QuizOptionRow()
-
-
             Spacer(modifier = Modifier.height(20.dp))
-            ElevatedButton(enabled = answer != null, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(10.dp), onClick = {
-                onAnswerDone(answer)
-            }) {
-                Text(if(isLastQuestion) "Submit" else "Next", style = typography.titleMedium)
+            ElevatedButton(
+                    enabled = answer != null,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = {
+                        onAnswerDone(answer)
+                    }) {
+                Text(
+                        if (isLastQuestion) "Submit" else "Next",
+                        style = typography.titleMedium
+                )
             }
         }
     }
 
-    @Composable
-    fun QuizOptionRow(answer: Answer?, isSelected: Boolean, onClick: (selectedAns: Answer?) -> Unit)
+    @Composable fun QuizOptionRow(
+        answer: Answer?,
+        isSelected: Boolean,
+        onClick: (selectedAns: Answer?) -> Unit,
+    )
     {
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -472,19 +610,43 @@ class QuizGatekeeperGuideBlock
             }
             .drawBehind {
                 drawRoundRect(
-                    color = primaryColor!!, topLeft = Offset(0f, 0f), size = Size(size.width, size.height), cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx()), style = Stroke(width = 5.0f, cap = StrokeCap.Round)
+                        color = primaryColor!!,
+                        topLeft = Offset(
+                                0f,
+                                0f
+                        ),
+                        size = Size(
+                                size.width,
+                                size.height
+                        ),
+                        cornerRadius = CornerRadius(
+                                8.dp.toPx(),
+                                8.dp.toPx()
+                        ),
+                        style = Stroke(
+                                width = 5.0f,
+                                cap = StrokeCap.Round
+                        )
                 )
             }
-            .padding(horizontal = 10.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+            .padding(
+                    horizontal = 10.dp,
+                    vertical = 10.dp
+            ),
+                verticalAlignment = Alignment.CenterVertically) {
             Text(
 
-                text = answer?.label
-                    ?: "", style = typography.titleSmall, modifier = Modifier.weight(1f)
+                    text = answer?.label ?: "",
+                    style = typography.titleSmall,
+                    modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(10.dp))
-            RadioButton(modifier = Modifier.size(10.dp), selected = isSelected, onClick = { //                answer?.isSelected?.value = true
-                onClick(answer)
-            })
+            RadioButton(
+                    modifier = Modifier.size(10.dp),
+                    selected = isSelected,
+                    onClick = { //                answer?.isSelected?.value = true
+                        onClick(answer)
+                    })
         }
 
     }
@@ -496,34 +658,46 @@ class QuizGatekeeperGuideBlock
 
 
         typography = MaterialTheme.typography; //        Quiz() //        ErrorScreen(detailMsg = "Failed to parse extra_json ! ")
-        //        show(activity=AppCompatActivity(),contextualContainer = null)
-    }
-
-    @Preview(showBackground = true)
-    @Composable
-    fun showLockedOutPreview()
-    {
-        typography = MaterialTheme.typography;
-        LockedOut(0L){
+        show(
+                activity = AppCompatActivity(),
+                mContextualContainer = null
+        ) {
 
         }
     }
 
-    @Preview(showBackground = true)
-    @Composable
-    fun showFailPreview()
-    {
-        typography = MaterialTheme.typography;
-        ResultScreen(0, 0,0,0){
+//    @Preview(showBackground = true) @Composable
+//    fun showLockedOutPreview()
+//    {
+//        typography = MaterialTheme.typography;
+//        LockedOut(0L) {
+//
+//        }
+//    }
 
-        }
-    }
+//    @Preview(showBackground = true) @Composable
+//    fun showFailPreview()
+//    {
+//        typography = MaterialTheme.typography;
+//        ResultScreen(
+//                0,
+//                0,
+//                0,
+//                0
+//        ) {
+//
+//        }
+//    }
+
     private fun parseJson(json: String?): DataState<QuizGK>
     {
         if (mQuizGK == null && json != null)
         {
             runCatching {
-                mQuizGK = Gson().fromJson(json, QuizGK::class.java)
+                mQuizGK = Gson().fromJson(
+                        json,
+                        QuizGK::class.java
+                )
             }.onFailure {
                 return DataState.Error(errorMsg = it.localizedMessage ?: "Failed to parse json")
             }

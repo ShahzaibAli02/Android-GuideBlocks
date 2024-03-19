@@ -45,6 +45,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.contextu.al.common.extensions.complete
+import com.contextu.al.common.extensions.dismiss
 import com.contextu.al.model.customguide.ContextualContainer
 import com.contextu.al.mychecklist.composables.CheckListRow
 import com.contextu.al.mychecklist.composables.LazyDivider
@@ -120,15 +122,14 @@ class MyCheckListGuideBlocks
                     IconButton(modifier = Modifier.size(20.dp), onClick = {
                         coroutineScope.launch {
                             bottomSheetState.bottomSheetState.hide()
-
                             if(taskList.all { it.getChecked(contextualContainer!!) })
                             {
-                                contextualContainer?.guidePayload?.complete?.onClick(null)
-                                contextualContainer?.guidePayload?.nextStep?.onClick(null)
+                                contextualContainer?.complete()
                                 contextualContainer?.setTag("extraJson", contextualContainer.guidePayload.guide.extraJson ?:"")
                                 contextualContainer?.setTag(MY_CHECK_LIST_DONE,1)
                             }
-                            else   contextualContainer?.guidePayload?.dismissGuide?.onClick(null)
+                            else
+                                contextualContainer?.dismiss()
                         }
                     }) {
                         Icon(Icons.Default.Close, contentDescription = "Close")
