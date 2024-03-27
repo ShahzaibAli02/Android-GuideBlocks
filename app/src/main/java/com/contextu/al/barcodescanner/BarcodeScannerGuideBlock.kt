@@ -45,18 +45,10 @@ class BarcodeScannerGuideBlock(
             )
             return
         }
-        Log.d(
-                "BARCODESCANNER",
-                "SHOW BAR SCANNER : "
-        )
         resultListener=object : ResultListener{
             override fun onResultReceived(resultCode: Int, intent: Intent?)
             {
 
-                Log.d(
-                        "BARCODESCANNER",
-                        "onResultReceived: ${resultCode}"
-                )
                 if (resultCode == Activity.RESULT_OK) {
                     if (intent == null) {
                         onScanResult.invoke(null)
@@ -66,10 +58,6 @@ class BarcodeScannerGuideBlock(
                     intent.getStringExtra(BarcodeScanningActivity.BARCODE_DATA)?.let {
                         onScanResult.invoke(it)
                         setResultAsTag(it)
-                        Log.d(
-                                "BARCODESCANNER",
-                                "onResultReceived: ${it}"
-                        )
                         contextualContainer.clickedInside()
                     } ?: {
                         onScanResult.invoke(null)

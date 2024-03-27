@@ -66,10 +66,6 @@ class BarcodeScanningActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(
-                "BARCODESCANNER",
-                "onCreate: "
-        )
         setContentView(R.layout.activity_live_barcode)
         preview = findViewById(R.id.camera_preview)
         graphicOverlay = findViewById<GraphicOverlay>(R.id.camera_preview_graphic_overlay).apply {
