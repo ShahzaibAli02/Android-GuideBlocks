@@ -3,6 +3,8 @@ package com.contextu.al.multiselectsurvey
 import android.app.Activity
 import androidx.appcompat.app.AlertDialog
 import com.contextu.al.R
+import com.contextu.al.common.extensions.clickedOutside
+import com.contextu.al.common.extensions.complete
 import com.contextu.al.model.customguide.ContextualContainer
 import com.contextu.al.model.customguide.Feedback
 import com.contextu.al.multiselectsurvey.model.MultiSelectSurveyFeedbackModel
@@ -32,8 +34,7 @@ class MultiSelectSurveyGuideBlock (val activity:Activity,val contextualContainer
                             updatedMultiChoice.add(multiChoiceItems[index])
                         }
                     }
-                    contextualContainer.guidePayload.complete.onClick(null)
-                    contextualContainer.guidePayload.nextStep.onClick(null)
+                    contextualContainer.complete()
                     jsonObject.addProperty("any-other-custom-data", "Example custom data")
                     contextualContainer.operations.submitFeedback(contextualContainer.guidePayload.guide.feedID,
                         Feedback(contextualContainer.guidePayload.guide.feedBackTitle ?: "", updatedMultiChoice, jsonObject)
@@ -45,7 +46,7 @@ class MultiSelectSurveyGuideBlock (val activity:Activity,val contextualContainer
                     }
                 }
                 .setOnDismissListener {
-                    contextualContainer.guidePayload.dismissGuide.onClick(null)
+                    contextualContainer.clickedOutside()
                 }
                 .create()
                 .show()

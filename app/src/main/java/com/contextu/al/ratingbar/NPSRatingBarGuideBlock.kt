@@ -35,7 +35,7 @@ import com.contextu.al.common.extensions.setTag
 import com.trafi.ratingseekbar.RatingSeekBar
 import com.google.gson.JsonObject as JsonObject1
 
-class NPSRatingBarGuideBlock : ComponentActivity()
+class NPSRatingBarGuideBlock
 {
 
 

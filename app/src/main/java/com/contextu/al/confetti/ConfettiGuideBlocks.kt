@@ -2,9 +2,11 @@ package com.contextu.al.confetti
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Window
 import com.contextu.al.R
 import com.contextu.al.common.extensions.clickedOutside
@@ -22,6 +24,8 @@ class ConfettiGuideBlocks(private val activity: Activity,private val contextualC
 
     private lateinit var viewKonfetti: KonfettiView
     private var closed_manually:Boolean=false
+    var onStart: ((inputStart: Unit) -> Unit)?=null;
+    var onEnd: ((inputEnd: Unit) -> Unit)?=null;
     init {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -41,28 +45,37 @@ class ConfettiGuideBlocks(private val activity: Activity,private val contextualC
         )
         viewKonfetti = findViewById<KonfettiView>(R.id.konfettiView)
         viewKonfetti.start(party)
-    }
-
-    fun show(onStart: (inputStart: Unit) -> Unit, onEnd: (inputEnd: Unit) -> Unit){
         viewKonfetti.onParticleSystemUpdateListener = object : OnParticleSystemUpdateListener{
             override fun onParticleSystemEnded(view: KonfettiView, party: Party, activeSystems: Int) {
-                onEnd
+                onEnd?.invoke(Unit)
                 closed_manually=true
                 dismiss()
             }
 
             override fun onParticleSystemStarted(view: KonfettiView, party: Party, activeSystems: Int) {
-                onStart
+                onStart?.invoke(Unit)
             }
 
         }
     }
-    override fun dismiss() {
 
+    fun show(onStart: (inputStart: Unit) -> Unit, onEnd: (inputEnd: Unit) -> Unit){
+        this.onStart=onStart
+        this.onEnd=onEnd
+        this.show()
+//        activity.startActivity(Intent(activity,ConfettiGuideBlocks::class.java))
+    }
+    override fun dismiss() {
+        onStart =null
+        onEnd =null
         if(closed_manually)
+        {
             contextualContainer.dismiss()
+        }
         else
+        {
             contextualContainer.clickedOutside()
+        }
         super.dismiss()
     }
 }

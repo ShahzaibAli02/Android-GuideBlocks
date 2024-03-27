@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.lifecycle.ViewModel
 import com.contextu.al.Player
 import com.contextu.al.R
+import com.contextu.al.common.extensions.dismiss
 import com.contextu.al.customtip.viewmodels.CustomGbTipViewModel
 import com.contextu.al.databinding.LytCustomTipBinding
 import com.contextu.al.model.customguide.ContextualContainer
@@ -42,6 +43,7 @@ class CustomGBTip(val activity: Activity, val contextualContainer: ContextualCon
             mViewToDisplay.txtMessage.text = widget.contentText.text
             mViewToDisplay.btnDismiss.text= "Dismiss"
             mViewToDisplay.btnDismiss.setOnClickListener {
+
                 mViewModel.onDismiss()
                 tipAttachHelper.dismiss()
             }

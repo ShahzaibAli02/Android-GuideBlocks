@@ -87,7 +87,6 @@ class QuizGatekeeperGuideBlock
     )
     {
 
-
         this.mContextualContainer = mContextualContainer
         this.activity = activity
         val mViewModel: QuizGateKeeperViewModel by activity.viewModels()
