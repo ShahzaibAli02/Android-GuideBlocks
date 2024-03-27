@@ -1,6 +1,7 @@
 package com.contextu.al.fancyannouncement
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -44,4 +45,5 @@ class FancyAnnouncementGuideBlocks(private val activity: Activity): AlertDialog(
         cancelButton?.text = negativeText
         cancelButton?.setOnClickListener(negativeButtonListener)
     }
+
 }

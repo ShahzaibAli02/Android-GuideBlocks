@@ -26,7 +26,6 @@ import kotlinx.coroutines.flow.firstOrNull
         if(checked==false)
         {
             getCheckedKey().let {
-                Log.d("TAG", "getCheckedTAG: ${it} =  "+contextualContainer.tagManager.getTag(it).firstOrNull())
                 checked=contextualContainer.tagManager.getTag(it).firstOrNull()?.tagStringValue.equals("true",true)
             }
         }
@@ -38,7 +37,6 @@ import kotlinx.coroutines.flow.firstOrNull
 
         this.checked=checked
         getCheckedKey().let {
-            Log.d("TAG", "savingTag: ${it} = ${this.checked}")
             contextualContainer.tagManager.setStringTag(it, checked.toString())
         }
 
@@ -60,7 +58,6 @@ import kotlinx.coroutines.flow.firstOrNull
                         }
 
 
-                Log.d("Task", "doAction: SetTag Done")
             }
             TaskAction.gotoScreen -> {
                 action_data?.deeplink?.let{
@@ -68,7 +65,6 @@ import kotlinx.coroutines.flow.firstOrNull
                 }
             }
             TaskAction.Unknown -> {
-                Log.d("Task", "doAction: Unknown")
             }
             else ->
             {

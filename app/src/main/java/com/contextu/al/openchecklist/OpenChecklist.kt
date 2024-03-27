@@ -34,6 +34,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.contextu.al.R
+import com.contextu.al.common.extensions.clickedOutside
 import com.contextu.al.model.customguide.ContextualContainer
 import com.contextu.al.openchecklist.model.OpenChecklistTaskAction
 import com.contextu.al.openchecklist.viewModels.OpenChecklistViewModel
@@ -54,8 +55,10 @@ fun OpenChecklist(
     }
 
     Dialog(
-        onDismissRequest = {  },
-        DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+        onDismissRequest = {
+            contextualContainer.clickedOutside()
+        },
+        DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = true)
     ) {
         Column(
             modifier = Modifier

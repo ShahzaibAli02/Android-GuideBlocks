@@ -29,7 +29,7 @@ for the GuideBlock you wish to use, then add
 
         Contextual.registerGuideBlock(confettiGuideBlocks).observe(this){ contextualContainer ->
             if(contextualContainer.guidePayload.guide.guideBlock.contentEquals(confettiGuideBlocks)){
-                ConfettiGuideBlocks(this@MainActivity).show()
+                ConfettiGuideBlocks(this@MainActivity,contextualContainer).show()
             }
         }
 ```

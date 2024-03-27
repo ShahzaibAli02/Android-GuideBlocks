@@ -35,7 +35,7 @@ import com.contextu.al.common.extensions.setTag
 import com.trafi.ratingseekbar.RatingSeekBar
 import com.google.gson.JsonObject as JsonObject1
 
-class NPSRatingBarGuideBlock : ComponentActivity()
+class NPSRatingBarGuideBlock
 {
 
 
@@ -64,8 +64,8 @@ class NPSRatingBarGuideBlock : ComponentActivity()
         if (isShowing)
         {
             Dialog(onDismissRequest = {
+                contextualContainer.guidePayload.clickOutside.onClick(null)
                 isShowing = false
-                contextualContainer.guidePayload.dismissGuide.onClick(null)
                 onCancel()
             }) {
 
@@ -97,10 +97,10 @@ class NPSRatingBarGuideBlock : ComponentActivity()
                         Spacer(modifier = Modifier.height(20.dp))
                         Row {
                             TextButton(onClick = {
+                                contextualContainer.guidePayload.dismissGuide.onClick(null)
                                 isShowing = false
                                 onCancel()
                             }) {
-                                contextualContainer.guidePayload.dismissGuide.onClick(null)
                                 Text(
                                     text = mGuide.buttons.prevButton?.text
                                         ?: "Cancel", fontSize = MaterialTheme.typography.titleMedium.fontSize
@@ -122,8 +122,8 @@ class NPSRatingBarGuideBlock : ComponentActivity()
                                 isShowing = false
                                 onSubmit(mProgress)
                                 contextualContainer.guidePayload.complete.onClick(null)
-                                contextualContainer.guidePayload.nextStep.onClick(null)
                                 contextualContainer.setTag(NPS_RATING_COMPLETED,1)
+
                             }) {
                                 Text(
                                     text = mGuide.buttons.nextButton?.text

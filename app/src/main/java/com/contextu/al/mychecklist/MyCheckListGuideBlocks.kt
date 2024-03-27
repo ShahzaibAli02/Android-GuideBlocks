@@ -36,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +46,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.contextu.al.common.extensions.clickedInside
+import com.contextu.al.common.extensions.clickedOutside
+import com.contextu.al.common.extensions.complete
+import com.contextu.al.common.extensions.dismiss
 import com.contextu.al.model.customguide.ContextualContainer
 import com.contextu.al.mychecklist.composables.CheckListRow
 import com.contextu.al.mychecklist.composables.LazyDivider
@@ -53,6 +58,8 @@ import com.contextu.al.mychecklist.viewModels.TaskViewModel
 import com.contextu.al.common.extensions.getIntegerTag
 import com.contextu.al.common.extensions.getStringTag
 import com.contextu.al.common.extensions.setTag
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -105,30 +112,29 @@ class MyCheckListGuideBlocks
     @OptIn(ExperimentalMaterial3Api::class)
     private fun ShowBottomSheet(title: String, taskList: List<Task>)
     {
-
+        var isClosedManually = remember {false}
         val contextualContainer=LocalContextualContainer.current
         val bottomSheetState = rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false))
         val coroutineScope = rememberCoroutineScope()
         BottomSheetScaffold(
             scaffoldState = bottomSheetState, sheetContent = {
-
                 Row(modifier = Modifier
                     .align(Alignment.End)
                     .clickable {
-                        contextualContainer?.guidePayload?.clickInside?.onClick(null)
+                        contextualContainer?.clickedInside()
                     }) {
                     IconButton(modifier = Modifier.size(20.dp), onClick = {
                         coroutineScope.launch {
+                            isClosedManually=true
                             bottomSheetState.bottomSheetState.hide()
-
                             if(taskList.all { it.getChecked(contextualContainer!!) })
                             {
-                                contextualContainer?.guidePayload?.complete?.onClick(null)
-                                contextualContainer?.guidePayload?.nextStep?.onClick(null)
+                                contextualContainer?.complete()
                                 contextualContainer?.setTag("extraJson", contextualContainer.guidePayload.guide.extraJson ?:"")
                                 contextualContainer?.setTag(MY_CHECK_LIST_DONE,1)
                             }
-                            else   contextualContainer?.guidePayload?.dismissGuide?.onClick(null)
+                            else
+                                contextualContainer?.dismiss()
                         }
                     }) {
                         Icon(Icons.Default.Close, contentDescription = "Close")
@@ -143,6 +149,12 @@ class MyCheckListGuideBlocks
 
             LaunchedEffect(Random.nextInt()) {
                 bottomSheetState.bottomSheetState.expand()
+                snapshotFlow { bottomSheetState.bottomSheetState.isVisible }.collectLatest {isVisible->
+                    if(!isClosedManually && !isVisible)
+                    {
+                        contextualContainer?.clickedOutside()
+                    }
+                }
             }
         }
 
@@ -158,8 +170,8 @@ class MyCheckListGuideBlocks
         Column(modifier = modifier) {
             Text(
                 text = title, color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp)
 
             )
             Card(

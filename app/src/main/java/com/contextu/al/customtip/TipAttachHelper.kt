@@ -23,50 +23,6 @@ import java.util.Locale
 
 class TipAttachHelper(val activity: Activity, val widget: ContextualBase)
 {
-
-    fun setTipBackground(baseView: View, widget: ContextualBase): FrameLayout
-    {
-        val layoutInflate = activity!!.getSystemService(
-                Context.LAYOUT_INFLATER_SERVICE
-        ) as LayoutInflater
-        val borderOverlap = layoutInflate.inflate(
-                R.layout.border_overlap,
-                LinearLayout(activity)
-        )
-        val borderFrame = borderOverlap.findViewById<FrameLayout>(R.id.pz_borderframe)
-
-        val borderRadius = widget.baseView.getCornerRadius()
-        var borderWidth = widget.baseView.getBorderWidth()
-
-        borderWidth = Contextual.state.device.convertDpToPx(borderWidth)
-
-        val drawableShape = setShapeDrawable(
-                widget.baseView.backgroundColor,
-                widget.baseView.borderColor,
-                borderRadius,
-                borderWidth,
-                activity
-        )
-        borderFrame.background = drawableShape
-        borderFrame.setPadding(
-                borderWidth,
-                borderWidth,
-                borderWidth,
-                borderWidth
-        )
-        borderFrame.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        if (borderFrame.parent != null)
-        {
-            (borderFrame.parent as ViewGroup).removeView(borderFrame)
-        }
-        borderFrame.addView(baseView)
-
-        return borderFrame
-    }
-
     fun dismiss()
     {
         ContextualBase.dismissBaseView()

@@ -15,10 +15,17 @@ fun ContextualContainer.clicked(view: View? =null)
 {
     this.guidePayload.clickInside.onClick(null)
 }
+fun ContextualContainer.clickedOutside(view: View? =null)
+{
+    this.guidePayload.clickOutside.onClick(null)
+}
+fun ContextualContainer.clickedInside(view: View? =null)
+{
+    this.guidePayload.clickInside.onClick(null)
+}
 fun ContextualContainer.dismiss(view: View? =null)
 {
-    this.guidePayload.dismissGuide.onClick(null)
-    this.guidePayload.prevStep.onClick(null)
+    this.guidePayload.dismissGuide.onClick(view)
 }
 
 
