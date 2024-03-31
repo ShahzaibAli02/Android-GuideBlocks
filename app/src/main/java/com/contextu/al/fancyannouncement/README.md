@@ -25,13 +25,28 @@ import com.contextu.al.core.CtxEventObserver
 4. for the GuideBlock you wish to use, then Copy-Paste the instantiation of the Guide Component AFTER the Contextual SDK registration.
 
 ```
-        val faGuideBlocks = "FancyAnnouncement"
+      
+        val fancyAnnouncement = "FancyAnnouncement"
+        Contextual.registerGuideBlock(fancyAnnouncement).observe(this) { contextualContainer ->
+            if (contextualContainer.guidePayload.guide.guideBlock.contentEquals(fancyAnnouncement))
+            {
 
-        Contextual.registerGuideBlock(faGuideBlocks).observe(this){ contextualContainer ->
-            if(contextualContainer.guidePayload.guide.guideBlock.contentEquals(faGuideBlocks)){
-                FancyAnnouncementGuideBlocks(this@MainActivity).show()
+
+                val guideBlock = FancyAnnouncementGuideBlocks(this,contextualContainer)
+                guideBlock.show(
+                        { v: View? ->
+                            guideBlock.dismiss()
+                            contextualContainer.tagManager.setStringTag(
+                                    "test_key",
+                                    "test_value"
+                            )
+                        },
+                        { v: View? ->
+                            guideBlock.dismiss()
+                        }
+                )
             }
-        }
+        } 
 ```
  
 5. Build your App and Run it on a phone or

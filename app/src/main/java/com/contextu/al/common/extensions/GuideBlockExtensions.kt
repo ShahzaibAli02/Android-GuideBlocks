@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.firstOrNull
 fun ContextualContainer.complete(view: View? =null)
 {
     this.guidePayload.complete.onClick(null)
-    this.guidePayload.nextStep.onClick(null)
 }
 fun ContextualContainer.clicked(view: View? =null)
 {
@@ -26,6 +25,10 @@ fun ContextualContainer.clickedInside(view: View? =null)
 fun ContextualContainer.dismiss(view: View? =null)
 {
     this.guidePayload.dismissGuide.onClick(view)
+}
+fun ContextualContainer.previous(view: View? =null)
+{
+    this.guidePayload.prevStep.onClick(view)
 }
 
 
