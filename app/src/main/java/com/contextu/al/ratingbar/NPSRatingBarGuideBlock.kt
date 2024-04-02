@@ -28,6 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
+import com.contextu.al.common.extensions.clickedOutside
+import com.contextu.al.common.extensions.complete
 import com.contextu.al.model.customguide.ContextualContainer
 import com.contextu.al.model.customguide.Feedback
 import com.contextu.al.common.extensions.getIntegerTag
@@ -64,7 +66,7 @@ class NPSRatingBarGuideBlock
         if (isShowing)
         {
             Dialog(onDismissRequest = {
-                contextualContainer.guidePayload.clickOutside.onClick(null)
+                contextualContainer.clickedOutside()
                 isShowing = false
                 onCancel()
             }) {
@@ -121,7 +123,7 @@ class NPSRatingBarGuideBlock
 
                                 isShowing = false
                                 onSubmit(mProgress)
-                                contextualContainer.guidePayload.complete.onClick(null)
+                                contextualContainer.complete()
                                 contextualContainer.setTag(NPS_RATING_COMPLETED,1)
 
                             }) {
