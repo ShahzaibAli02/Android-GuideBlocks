@@ -29,13 +29,18 @@ class FancyAnnouncementGuideBlocks(private val activity: Activity,private val co
     fun show(
              negativeButtonListener: View.OnClickListener,
              positiveButtonListener: View.OnClickListener,) {
-
+        if(activity.isFinishing || activity.isDestroyed)
+        {
+            return
+        }
 
         this.window?.setLayout((activity.resources.displayMetrics.widthPixels * 0.90).toInt(),
             (activity.resources.displayMetrics.heightPixels * 0.55).toInt())
 
-        this.show()
 
+
+
+        this.show()
 
         val title = contextualContainer.guidePayload.guide.titleText.text ?: ""
         val message = contextualContainer.guidePayload.guide.contentText.text ?: ""
@@ -83,10 +88,6 @@ class FancyAnnouncementGuideBlocks(private val activity: Activity,private val co
         val createAccountButton = this.findViewById<Button>(R.id.create_button)
         createAccountButton?.text = positiveText
         createAccountButton?.setOnClickListener{
-            Log.d(
-                    "FancyAnnouncementGuideBlocks",
-                    "ON CLICK NEXT: "
-            )
             closed_manually=true;
             positiveButtonListener.onClick(it)
             contextualContainer.complete()
@@ -95,24 +96,19 @@ class FancyAnnouncementGuideBlocks(private val activity: Activity,private val co
         val cancelButton = this.findViewById<Button>(R.id.cancel_button)
         cancelButton?.text = negativeText
         cancelButton?.setOnClickListener{
+
             closed_manually=true;
-            Log.d(
-                    "FancyAnnouncementGuideBlocks",
-                    "ON BACK BUTTON : "
-            )
             contextualContainer.dismiss()
             negativeButtonListener.onClick(it)
         }
         this.setOnDismissListener {
-            Log.d(
-                    "FancyAnnouncementGuideBlocks",
-                    "ON Dismiss : "
-            )
+
             if(!closed_manually)
             {
                 contextualContainer.clickedOutside()
 
             }
+
         }
 
 
