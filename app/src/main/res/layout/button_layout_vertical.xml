@@ -1,0 +1,23 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/pz_buttontopLayer"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <include
+    android:id="@+id/pz_nextButton"
+    layout="@layout/ui_button"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@+id/pz_prevButton"
+    android:layout_centerHorizontal="true"
+    android:text="Next" />
+
+  <include
+    android:id="@+id/pz_prevButton"
+    layout="@layout/ui_button"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerHorizontal="true"
+    android:text="Prev" />
+
+</RelativeLayout>

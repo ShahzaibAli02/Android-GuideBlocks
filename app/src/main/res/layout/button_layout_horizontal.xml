@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/pz_buttontopLayer"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <include
+    android:id="@+id/pz_nextButton"
+    layout="@layout/ui_button"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:text="Next" />
+
+  <include layout="@layout/ui_button"
+    android:id="@+id/pz_prevButton"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:text="Prev" />
+
+</RelativeLayout>

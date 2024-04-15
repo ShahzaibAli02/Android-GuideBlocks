@@ -16,6 +16,8 @@
     <color name="barcode_field_value">#797979</color>
     <color name="barcode_field_box_stroke">#757575</color>
 
+
+    <color name="black_transparent_50">#80000000</color>
     <color name="fail_quiz_color">#981515</color>
     <color name="pass_quiz_color">#17801C</color>
 </resources>
