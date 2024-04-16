@@ -7,10 +7,7 @@ TestAppBranch: main
 Description: A custom test tip guideblock to demonstrate how GB developer can attach custom Guide block to tip.
 Extensibility: {
   {
-    "guideBlockKey": "TestTip",
-    "message":"Test this is test custom guideblock with one textview and button",
-    "buttonText":"Dismiss"
+    "guideBlockKey": "TestTip"
   }
 }
 ```
-

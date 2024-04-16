@@ -141,7 +141,6 @@ class MyCheckListGuideBlocks
                     Spacer(modifier = Modifier.width(20.dp))
                 }
 
-
                 MyCheckList(title, taskList, modifier = Modifier.height((350 - 50).dp))
             }, sheetPeekHeight = 350.dp, modifier = Modifier.systemBarsPadding()
         ) {

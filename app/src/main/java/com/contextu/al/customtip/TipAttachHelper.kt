@@ -1,28 +1,27 @@
 package com.contextu.al.customtip
 
 import android.app.Activity
-import android.content.Context
-import android.graphics.Color
 import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import androidx.annotation.ColorRes
 import com.contextu.al.Contextual
 import com.contextu.al.ContextualBase
 import com.contextu.al.CtxObserver
 import com.contextu.al.Player
-import com.contextu.al.R
 import com.contextu.al.previewMode.PreviewMode
-import com.contextu.al.setShapeDrawable
 import com.contextu.al.ui.containers.FocusLayer
 import com.contextu.al.ui.containers.TipBase
 import java.util.Locale
 
 class TipAttachHelper(val activity: Activity, val widget: ContextualBase)
 {
+
+    private var drawOverLay:Boolean = true
+    fun drawOverLay(value:Boolean):TipAttachHelper
+    {
+        drawOverLay=value
+        return this
+    }
     fun dismiss()
     {
         ContextualBase.dismissBaseView()
@@ -34,8 +33,14 @@ class TipAttachHelper(val activity: Activity, val widget: ContextualBase)
         tipPointerColor:Int,
         pointerWidth: Int = 20,
         pointerHeight: Int = 20,
+        onOutSideDismiss:(()->Unit)?=null,
     )
     {
+
+        if (ContextualBase.mTips.size > 0)
+        {
+            this.dismiss()
+        }
 
         val resActivity = activity.resources
         val tipPointerSizeHeight = TypedValue.applyDimension(
@@ -54,10 +59,6 @@ class TipAttachHelper(val activity: Activity, val widget: ContextualBase)
         val viewGroup = Player.getActivity()
             .findViewById<View>(android.R.id.content).rootView as ViewGroup
 
-        if (ContextualBase.mTips.size > 0)
-        {
-            return
-        }
 
 
         val position = widget.meta.placement
@@ -78,13 +79,19 @@ class TipAttachHelper(val activity: Activity, val widget: ContextualBase)
             )
         }
 
-        val focusLayer = FocusLayer(activity)
-        focusLayer.setTargetView(anchor)
-        focusLayer.pointziWidget = widget
-        focusLayer.contentView = tipContent
-        focusLayer.activityView = viewGroup
-        ContextualBase.mTipsBackground.add((focusLayer as FocusLayer))
-        focusLayer.show()
+
+
+        if(drawOverLay)
+        {
+            val focusLayer = FocusLayer(activity)
+            focusLayer.setTargetView(anchor)
+            focusLayer.pointziWidget = widget
+            focusLayer.contentView = tipContent
+            focusLayer.activityView = viewGroup
+            focusLayer.onOutSideDismiss = onOutSideDismiss
+            ContextualBase.mTipsBackground.add((focusLayer as FocusLayer))
+            focusLayer.show()
+        }
 
 
         val tipPopup = TipBase.Builder(activity).parentView(
@@ -116,6 +123,7 @@ class TipAttachHelper(val activity: Activity, val widget: ContextualBase)
                         View.MeasureSpec.UNSPECIFIED
                 )
         )
+        tipPopup.elevation=100f
         tipPopup!!.show()
     }
 }

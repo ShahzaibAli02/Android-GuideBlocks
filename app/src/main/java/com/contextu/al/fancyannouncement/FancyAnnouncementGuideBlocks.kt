@@ -37,17 +37,12 @@ class FancyAnnouncementGuideBlocks(
         this.setContentView(R.layout.fancy_announcement)
 
     }
-
     init {
         // Listen for the activity's onDestroy event to dismiss the dialog if needed
         weakActivity.get()?.let { activity ->
             activity.lifecycle.addObserver(object : DefaultLifecycleObserver
             {
                 override fun onDestroy(owner: LifecycleOwner) {
-                    Log.d(
-                            TAG,
-                            "onDestroy: "
-                    )
                     dismiss()
                 }
             })
@@ -128,10 +123,6 @@ class FancyAnnouncementGuideBlocks(
 
             if (!closed_manually)
             {
-                Log.d(
-                        TAG,
-                        "DISMISS: clickedOutside"
-                )
                 contextualContainer.clickedOutside()
             }
 

@@ -1,0 +1,17 @@
+```
+Title: AppField Edit Guide
+Author: Shahzaib Ali
+Contact: support@contextu.al
+TestApp: https://github.com/contextu-al/FavDish
+TestAppBranch: main
+Description: A tip with steps to guide user how to do something.
+Screenshot: 
+Video: 
+Extensibility: {
+    "guideBlockKey": "AppFieldEdit",
+    "validation": {
+      "regex": "^.+$"
+    }
+}
+```
+

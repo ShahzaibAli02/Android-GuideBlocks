@@ -3,7 +3,9 @@ package com.contextu.al.common.extensions
 
 import android.view.View
 import com.contextu.al.model.customguide.ContextualContainer
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 
 fun ContextualContainer.complete(view: View? =null)
