@@ -15,7 +15,6 @@ import androidx.core.widget.NestedScrollView
 import com.contextu.al.Contextual
 import com.contextu.al.ContextualBase
 import com.contextu.al.R
-import com.contextu.al.Temp
 import com.contextu.al.core.removeStrSymbol
 import com.contextu.al.getHeight
 import com.contextu.al.getWidth

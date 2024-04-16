@@ -4,16 +4,12 @@ import android.app.Activity
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.Button
-import android.widget.ScrollView
 import android.widget.Toast
-import androidx.core.widget.NestedScrollView
 import com.contextu.al.Contextual
 import com.contextu.al.ContextualBase
 import com.contextu.al.Player
 import com.contextu.al.R
-import com.contextu.al.Temp
 import com.contextu.al.appFieldEdit.interfaces.AppFieldValidationInterface
 import com.contextu.al.appFieldEdit.model.AppFieldEditValidation
 import com.contextu.al.appFieldEdit.utils.AppFieldStepHandler
@@ -74,6 +70,16 @@ class AppFieldEditGB(val activity: Activity, val contextualContainer: Contextual
             this.onDismiss?.invoke()
             return this
         }
+//
+//        rootView().viewTreeObserver.addOnScrollChangedListener {
+//
+//            clear()
+//            if (appFieldUiHandler.isViewVisible(mAnchor).not())
+//            {
+//                showTargetTip()
+//            }
+//        }
+
         if (appFieldUiHandler.isViewVisible(mAnchor).not())
         {
             appFieldUiHandler.scrollToView(view = mAnchor, tipViewHeight = setupView(widget!!).measuredHeight,onScrollDone = {
@@ -102,8 +108,6 @@ class AppFieldEditGB(val activity: Activity, val contextualContainer: Contextual
                 tipPointerColor = widget!!.baseView.backgroundColor,
         )
     }
-
-
 
 
     fun setOnDismissListener(onDismiss: () -> Unit): AppFieldEditGB
