@@ -1,8 +1,6 @@
 package com.contextu.al.appFieldEdit.utils
 
-import android.util.Log
 import com.contextu.al.ContextualBase
-import com.contextu.al.Temp
 import com.contextu.al.appFieldEdit.interfaces.AppFieldValidationInterface
 import com.contextu.al.appFieldEdit.model.AppFieldEditValidation
 

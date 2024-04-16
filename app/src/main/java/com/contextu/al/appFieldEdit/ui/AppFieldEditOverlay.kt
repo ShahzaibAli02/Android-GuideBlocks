@@ -233,8 +233,6 @@ class AppFieldEditOverlay(context: Context, attrs: AttributeSet?=null) : ViewGro
         mCloseButton?.let {
 
             (it.layoutParams as FrameLayout.LayoutParams).let {
-//                it.topMargin= mButton?.marginTop!!
-//                it.leftMargin= (mButton?.marginLeft!!-mButton!!.measuredWidth)-20
 
                 it.topMargin= 30
                 it.leftMargin= (mWidth-mCloseButton!!.measuredWidth)-20

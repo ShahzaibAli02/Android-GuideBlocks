@@ -57,6 +57,7 @@ Contextual.registerGuideBlock(AppFieldEditGB.GB_KEY).observeForever { contextual
 6. to set particular step valid
 ```kotlin
 
+
  AppFieldValidator().setValidValue(step,true)
 
 ``` 
