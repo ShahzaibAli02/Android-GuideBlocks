@@ -97,7 +97,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
 
-    implementation(group="com.contextu.al.dev",name="contextual",version = "3.0.2+0e991778") {
+    implementation(group="com.contextu.al.dev",name="contextual",version = "3.+") {
             exclude(group = "com.github.bumptech.glide")
             exclude(group = "androidx.room")
     }
@@ -111,11 +111,11 @@ dependencies {
     //coil
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("io.coil-kt:coil-gif:2.4.0")
-    implementation("io.coil-kt:coil-compose:2.4.0")
-    implementation("io.coil-kt:coil-gif:2.4.0")
+
 
     //scanner
     implementation("com.google.mlkit:barcode-scanning:17.0.3")
     implementation("com.trafi:rating-seek-bar:0.4-alpha")
     implementation("com.airbnb.android:lottie:4.2.0")
+
 }
