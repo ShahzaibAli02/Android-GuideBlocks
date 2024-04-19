@@ -97,7 +97,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
 
-    implementation(group="com.contextu.al.dev",name="contextual",version = "3.0.2+0e991778") {
+    implementation(group="com.contextu.al.dev",name="contextual",version = "3.0.2+f4346ea1") {
             exclude(group = "com.github.bumptech.glide")
             exclude(group = "androidx.room")
     }
